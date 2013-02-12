@@ -1,0 +1,31 @@
+From a31fd52099234e6d9e580f0fcd22774ca2709a65 Mon Sep 17 00:00:00 2001
+From: Mike McGrath <mmcgrath@redhat.com>
+Date: Thu, 25 Feb 2010 14:21:30 +0300
+Subject: [PATCH 01/11] from rpm
+
+---
+ daemon-init.in |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/daemon-init.in b/daemon-init.in
+index cdb9b93..f2feb9d 100644
+--- a/daemon-init.in
++++ b/daemon-init.in
+@@ -124,11 +124,13 @@ case "$1" in
+ 		echo -n "Starting nagios:"
+ 		$NagiosBin -v $NagiosCfgFile > /dev/null 2>&1;
+ 		if [ $? -eq 0 ]; then
+-			su - $NagiosUser -c "touch $NagiosVarDir/nagios.log $NagiosRetentionFile"
++                        touch $NagiosVarDir/nagios.log $NagiosRetentionFile
++                        chown $NagiosUser:$NagiosGroup $NagiosVarDir/nagios.log $NagiosRetentionFile
+ 			rm -f $NagiosCommandFile
+ 			touch $NagiosRunFile
+ 			chown $NagiosUser:$NagiosGroup $NagiosRunFile
+ 			$NagiosBin -d $NagiosCfgFile
++                        pidof nagios > $NagiosRunFile
+ 			if [ -d $NagiosLockDir ]; then touch $NagiosLockDir/$NagiosLockFile; fi
+ 			echo " done."
+ 			exit 0
+-- 
+1.7.3.5
+
