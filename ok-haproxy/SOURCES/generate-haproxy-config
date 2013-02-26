@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+require 'erb'
+
+def usage(error = nil)
+  puts "ERROR: #{error}" if error
+  puts "Usage: #{$0} <local_port> <remote_host> [remote_port]"
+  puts
+  exit(1)
+end
+
+# Check arguments
+usage if ARGV.empty?
+usage "Invalid params count!" if ARGV.count < 2 || ARGV.count > 3
+
+# Extract arguments
+local_port, remote_host, remote_port = ARGV
+
+# Read template and render it
+template = DATA.read
+erb = ERB.new(template)
+puts erb.result(binding)
+
+exit(0)
+
+__END__
+#
+# Temporary haproxy config to proxy tcp connections 
+# coming to local port <%= local_port %> to remote location <%= remote_host %>:<%= remote_port || local_port %>
+#
+# To use this config, save it to a file and run:
+# /opt/haproxy/bin/haproxy -f your_file.cfg
+#
+global
+  daemon
+  pidfile /var/run/haproxy-temp<%= local_port %>.pid
+  uid nobody
+  gid nobody
+  ulimit-n 32768
+  maxconn 8000
+  stats socket /tmp/haproxy-temp<%= local_port %>.stats
+
+listen temp<%= local_port %>
+  bind :<%= local_port %>
+  mode tcp
+  timeout connect 2s
+  timeout queue 120s
+  timeout server 120s
+  timeout client 120s
+
+  server proxy_target <%= remote_host %>:<%= remote_port || local_port %>
+
+

@@ -1,0 +1,90 @@
+#!/bin/sh
+#
+# chkconfig: - 85 15
+# description: HA-Proxy is a TCP/HTTP reverse proxy which is particularly suited \
+#              for high availability environments.
+# processname: haproxy
+# config: /opt/haproxy/conf/haproxy.cfg
+# pidfile: /var/run/haproxy.pid
+
+. /etc/init.d/functions
+
+# This is our service name
+BASENAME=haproxy
+
+[ -f /opt/haproxy/conf/haproxy.cfg ] || exit 1
+
+RETVAL=0
+
+start() {
+  /opt/haproxy/bin/haproxy -c -q -f /opt/haproxy/conf/haproxy.cfg
+  if [ $? -ne 0 ]; then
+    echo "Errors found in configuration file, check it with '$BASENAME check'."
+    return 1
+  fi
+
+  echo -n "Starting $BASENAME: "
+  /opt/haproxy/bin/haproxy -D -f /opt/haproxy/conf/haproxy.cfg -p /var/run/$BASENAME.pid
+  RETVAL=$?
+  echo
+  return $RETVAL
+}
+
+stop() {
+  echo -n "Shutting down $BASENAME: "
+  PID=`cat /var/run/$BASENAME.pid`
+  if [ "$PID" == "" ]; then
+    echo "Not running!"
+    return 1
+  fi
+  kill -USR1 $PID
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && rm -f /var/run/$BASENAME.pid
+  return $RETVAL
+}
+
+restart() {
+  /opt/haproxy/bin/haproxy -c -q -f /opt/haproxy/conf/haproxy.cfg
+  if [ $? -ne 0 ]; then
+    echo "Errors found in configuration file, check it with '$BASENAME check'."
+    return 1
+  fi
+
+  echo -n "Restarting $BASENAME: "
+  /opt/haproxy/bin/haproxy -f /opt/haproxy/conf/haproxy.cfg -p /var/run/$BASENAME.pid -st $(</var/run/$BASENAME.pid)
+  RETVAL=$?
+  echo
+  return $RETVAL
+}
+
+check() {
+  /opt/haproxy/bin/haproxy -c -q -V -f /opt/haproxy/conf/haproxy.cfg
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  reload)
+    restart
+    ;;
+  check)
+    check
+    ;;
+  status)
+    status haproxy
+    ;;
+  *)
+    echo $"Usage: $BASENAME {start|stop|restart|reload|condrestart|status|check}"
+    RETVAL=1
+esac
+ 
+exit $RETVAL
