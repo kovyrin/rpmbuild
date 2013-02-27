@@ -4,7 +4,7 @@
 %define haproxy_revision 01
 
 #---------------------------------------------------------------------------------
-Name:           ls-haproxy
+Name:           ok-haproxy
 License:        GPL v2
 Group:          Development
 Summary:        The Reliable, High Performance TCP/HTTP Load Balancer
