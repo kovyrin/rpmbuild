@@ -5,8 +5,8 @@
 %define whisper_revision 06afbcd7423dc84454b3c01df913819bd889b7db
 
 Name:           ok-whisper
-Version:        %{whisper_version}+%{ok_version}
-Release:        %{whisper_revision}
+Version:        %{whisper_version}
+Release:        %{ok_version}+%{whisper_revision}
 Summary:        Fixed size round-robin style database
 Group:          Applications/Databases
 License:        Apache Software License 2.0
