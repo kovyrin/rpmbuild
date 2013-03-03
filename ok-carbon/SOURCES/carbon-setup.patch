@@ -1,0 +1,32 @@
+diff -aur carbon.orig/setup.cfg carbon/setup.cfg
+--- carbon.orig/setup.cfg	2013-02-21 01:00:16.000000000 -0600
++++ carbon/setup.cfg	2013-03-03 17:07:28.606264309 -0600
+@@ -1,7 +1,3 @@
+-[install]
+-prefix = /opt/graphite
+-install-lib = %(prefix)s/lib
+-
+ [bdist_rpm]
+ requires = python-twisted
+            whisper
+diff -aur carbon.orig/setup.py carbon/setup.py
+--- carbon.orig/setup.py	2013-02-21 01:00:16.000000000 -0600
++++ carbon/setup.py	2013-03-03 17:06:39.519366117 -0600
+@@ -12,12 +12,11 @@
+   from distutils.core import setup
+   setup_kwargs = dict()
+ 
+-
+-storage_dirs = [ ('storage/whisper',[]), ('storage/lists',[]),
+-                 ('storage/log',[]), ('storage/rrd',[]) ]
+-conf_files = [ ('conf', glob('conf/*.example')) ]
+-
+-install_files = storage_dirs + conf_files
++install_files = [
++  ('/var/lib/carbon/whisper',[]),
++  ('/var/lib/carbon/lists',[]),
++  ('/var/lib/carbon/rrd',[])
++]
+ 
+ # If we are building on RedHat, let's use the redhat init scripts.
+ if platform.dist()[0] == 'redhat':
