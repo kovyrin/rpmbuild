@@ -9,7 +9,7 @@
 
 #---------------------------------------------------------------------------------------------------
 %define carbon_version 0.9.10
-%define ok_version 03
+%define ok_version 04
 %define carbon_revision 728e6a1eafa483bc290c601f777d7aebbc5c8565
 
 Name:           ok-carbon

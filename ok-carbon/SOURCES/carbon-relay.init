@@ -8,11 +8,11 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-exec="/usr/bin/carbon-relay.py"
+exec="/opt/graphite/bin/carbon-relay.py"
 pidfile="/var/run/carbon-relay.pid"
 
-CONFIG="/etc/carbon/carbon.conf"
-LOG_DIR="/var/log/carbon-relay"
+CONFIG="/opt/graphite/conf/carbon.conf"
+LOG_DIR="/opt/graphite/storage/log"
 
 [ -e /etc/sysconfig/carbon-relay ] && . /etc/sysconfig/carbon-relay
 
