@@ -11,6 +11,13 @@ After working for many companies over the last decade and spending the first mon
 building 3rd-party software full time I've decided to do it once, store the recipes on Github and use
 the recipes whenever and wherever I need to.
 
-*Disclaimer*: This is not an opensource project, no bug reports will be accepted for the stuff in this repo,
+**Disclaimer:** This is not an opensource project, no bug reports will be accepted for the stuff in this repo,
 I do not guarantee license purity of this stuff and do not give any guarantees. If you want to ise it -
 feel free to. If you have a patch - feel free to send a pull request.
+
+How to Use This?
+----------------
+
+Each directory here represents an RPM package, go to any package directory and run `rake`.
+The results will be located in `RPMS`/`SRPMS` directories. You can run `rake -T` to get more
+information about available tasks.
