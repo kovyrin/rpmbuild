@@ -9,7 +9,7 @@
 
 #---------------------------------------------------------------------------------------------------
 %define carbon_version 0.9.10
-%define ok_version 01
+%define ok_version 02
 %define carbon_revision 728e6a1eafa483bc290c601f777d7aebbc5c8565
 
 Name:           ok-carbon
@@ -30,9 +30,6 @@ Source4:        carbon-relay.sysconfig
 Source5:        carbon-aggregator.init
 Source6:        carbon-aggregator.sysconfig
 
-Patch0:         carbon-setup.patch
-Patch1:         carbon-config.patch
-
 BuildArch:      noarch
 
 BuildRequires:  python python-devel python-setuptools
@@ -44,8 +41,6 @@ The backend for Graphite. Carbon is a data collection and storage agent.
 
 %prep
 %setup -q -n carbon
-%patch0 -p1
-%patch1 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")' build
@@ -54,12 +49,6 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")'
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 %{__python} -c 'import setuptools; execfile("setup.py")' install --skip-build --root %{buildroot}
 
-# Create log and var directories
-%{__mkdir_p} %{buildroot}%{_localstatedir}/log/carbon-cache
-%{__mkdir_p} %{buildroot}%{_localstatedir}/log/carbon-relay
-%{__mkdir_p} %{buildroot}%{_localstatedir}/log/carbon-aggregator
-%{__mkdir_p} %{buildroot}%{_localstatedir}/lib/carbon
-
 # Install system configuration and init scripts
 %{__install} -Dp -m0755 %{SOURCE1} %{buildroot}%{_initrddir}/carbon-cache
 %{__install} -Dp -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/carbon-cache
@@ -67,11 +56,6 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")'
 %{__install} -Dp -m0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/sysconfig/carbon-relay
 %{__install} -Dp -m0755 %{SOURCE5} %{buildroot}%{_initrddir}/carbon-aggregator
 %{__install} -Dp -m0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/carbon-aggregator
-
-# Install default configuration files
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/carbon
-%{__install} -Dp -m0644 conf/carbon.conf.example %{buildroot}%{_sysconfdir}/carbon/carbon.conf
-%{__install} -Dp -m0644 conf/storage-schemas.conf.example %{buildroot}%{_sysconfdir}/carbon/storage-schemas.conf
 
 # Create transient files in buildroot for ghosting
 %{__mkdir_p} %{buildroot}%{_localstatedir}/lock/subsys
@@ -85,10 +69,8 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")'
 %{__touch} %{buildroot}%{_localstatedir}/run/carbon-aggregator.pid
 
 %pre
-%{__getent} group carbon >/dev/null || %{__groupadd} -r carbon
-%{__getent} passwd carbon >/dev/null || \
-    %{__useradd} -r -g carbon -d %{_localstatedir}/lib/carbon \
-    -s /sbin/nologin -c "Carbon cache daemon" carbon
+%{__getent} group graphite >/dev/null || %{__groupadd} -r graphite
+%{__getent} passwd graphite >/dev/null || %{__useradd} -r -g graphite -d /opt/graphite -s /sbin/nologin -c "Graphite Daemons" carbon
 exit 0
 
 %preun
@@ -97,8 +79,7 @@ exit 0
 
 %postun
 if [ $1 = 0 ]; then
-  %{__getent} passwd carbon >/dev/null && \
-      %{__userdel} -r carbon 2>/dev/null
+  %{__getent} passwd graphite >/dev/null && %{__userdel} -r graphite 2>/dev/null
 fi
 exit 0
 
@@ -109,21 +90,18 @@ exit 0
 %defattr(-,root,root,-)
 %doc LICENSE README.md conf/*
 
-%{python_sitelib}/*
-/usr/bin/*
+/opt/graphite/bin
+/opt/graphite/lib
 %{_initrddir}/carbon-cache
 %{_initrddir}/carbon-relay
 %{_initrddir}/carbon-aggregator
 
-%config %{_sysconfdir}/carbon
+%config /opt/graphite/conf/*
 %config %{_sysconfdir}/sysconfig/carbon-cache
 %config %{_sysconfdir}/sysconfig/carbon-relay
 %config %{_sysconfdir}/sysconfig/carbon-aggregator
 
-%attr(-,%name,%name) %{_localstatedir}/lib/carbon
-%attr(-,%name,%name) %{_localstatedir}/log/carbon-cache
-%attr(-,%name,%name) %{_localstatedir}/log/carbon-relay
-%attr(-,%name,%name) %{_localstatedir}/log/carbon-aggregator
+%attr(-,graphite,graphite) /opt/graphite/storage
 
 %ghost %{_localstatedir}/lock/subsys/carbon-cache
 %ghost %{_localstatedir}/run/carbon-cache.pid
