@@ -9,7 +9,7 @@
 
 #---------------------------------------------------------------------------------------------------
 %define carbon_version 0.9.10
-%define ok_version 02
+%define ok_version 03
 %define carbon_revision 728e6a1eafa483bc290c601f777d7aebbc5c8565
 
 Name:           ok-carbon
@@ -70,7 +70,7 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")'
 
 %pre
 %{__getent} group graphite >/dev/null || %{__groupadd} -r graphite
-%{__getent} passwd graphite >/dev/null || %{__useradd} -r -g graphite -d /opt/graphite -s /sbin/nologin -c "Graphite Daemons" carbon
+%{__getent} passwd graphite >/dev/null || %{__useradd} -r -g graphite -d /opt/graphite -s /sbin/nologin -c "Graphite Daemons" graphite
 exit 0
 
 %preun
