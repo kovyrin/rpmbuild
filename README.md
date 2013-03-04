@@ -9,7 +9,8 @@ Why Did You Create This?
 
 After working for many companies over the last decade and spending the first month of my work basically
 building 3rd-party software full time I've decided to do it once, store the recipes on Github and use
-the recipes whenever and wherever I need to.
+them whenever and wherever I needed. As a bonus I'll keep improving the recipes and fixing bugs in them
+over time instead of creating them from scratch every time.
 
 **Disclaimer:** This is not an opensource project, no bug reports will be accepted for the stuff in this repo,
 I do not guarantee license purity of this stuff and do not give any guarantees. If you want to ise it -
