@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 %define ganglia_version 3.5.0
-%define package_revision 04
+%define package_revision 05
 
 Summary: Ganglia Distributed Monitoring System
 Name: ok-ganglia
@@ -40,7 +40,7 @@ well-defined XML format.
 %setup -n ganglia-%{version}
 
 %build
-./configure --with-gmetad --with-python=/usr --enable-status --prefix=/opt/ganglia
+./configure --with-gmetad --with-python=/usr --enable-status --prefix=/opt/ganglia --enable-graphite
 %__make %{?_smp_mflags}
 
 %post
@@ -98,5 +98,11 @@ rm -f $RPM_SOURCE_DIR/opt/ganglia/etc/conf.d/example.*
 %__rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Mon Mar 4 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
+- Enable graphite integration.
+
+* Mon Feb 11 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
+- Initial release for Ganglia 3.5.0.
+
 * Mon Feb 11 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
 - Initial release for Ganglia 3.5.0.
