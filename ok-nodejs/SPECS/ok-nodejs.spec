@@ -1,4 +1,4 @@
-%define nodejs_version 0.8.21
+%define nodejs_version 0.10.0
 %define ok_version 01
 
 Name:          ok-nodejs
@@ -36,12 +36,17 @@ rm -rf %{buildroot}
 %doc AUTHORS ChangeLog LICENSE README.md
 
 /usr/bin/node
-/usr/bin/node-waf
-/usr/include/node
-/usr/lib/node
+/usr/bin/npm
+
+/usr/lib/node_modules
+/usr/lib/dtrace/node.d
+
 /usr/share/man/man1/node.1.gz
 
 %changelog
+* Wed Mar 13 2013 Oleksiy Kovyrin <alexey@kovyrin.net> 0.10.0-01
+- Update from upstream
+
 * Tue Mar 5 2013 Oleksiy Kovyrin <alexey@kovyrin.net> 0.8.21-01
 - Update from upstream
 
