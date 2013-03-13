@@ -9,7 +9,7 @@
 
 #---------------------------------------------------------------------------------------------------
 %define carbon_version 0.9.10
-%define ok_version 04
+%define ok_version 05
 %define carbon_revision 728e6a1eafa483bc290c601f777d7aebbc5c8565
 
 Name:           ok-carbon
@@ -63,10 +63,8 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")'
 %{__touch} %{buildroot}%{_localstatedir}/lock/subsys/carbon-relay
 %{__touch} %{buildroot}%{_localstatedir}/lock/subsys/carbon-aggregator
 
-%{__mkdir_p} %{buildroot}%{_localstatedir}/run
-%{__touch} %{buildroot}%{_localstatedir}/run/carbon-cache.pid
-%{__touch} %{buildroot}%{_localstatedir}/run/carbon-relay.pid
-%{__touch} %{buildroot}%{_localstatedir}/run/carbon-aggregator.pid
+# Create pids directory
+%{__mkdir_p} %{buildroot}/opt/graphite/storage/pids
 
 %pre
 %{__getent} group graphite >/dev/null || %{__groupadd} -r graphite
@@ -104,11 +102,8 @@ exit 0
 %attr(-,graphite,graphite) /opt/graphite/storage
 
 %ghost %{_localstatedir}/lock/subsys/carbon-cache
-%ghost %{_localstatedir}/run/carbon-cache.pid
 %ghost %{_localstatedir}/lock/subsys/carbon-relay
-%ghost %{_localstatedir}/run/carbon-relay.pid
 %ghost %{_localstatedir}/lock/subsys/carbon-aggregator
-%ghost %{_localstatedir}/run/carbon-aggregator.pid
 
 %changelog
 * Fri Jun 1 2012 Ben P <ben@g.megatron.org> - 0.9.10-1

@@ -9,7 +9,7 @@
 . /etc/rc.d/init.d/functions
 
 exec="/opt/graphite/bin/carbon-cache.py"
-pidfile="/var/run/carbon-cache.pid"
+pidfile="/opt/graphite/storage/pids/carbon-cache.pid"
 
 CONFIG="/opt/graphite/conf/carbon.conf"
 LOG_DIR="/opt/graphite/storage/log"
