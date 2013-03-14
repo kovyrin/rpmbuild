@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#	/etc/rc.d/init.d/ls-statsd
+#	/etc/rc.d/init.d/statsd
 #
 # Starts the ls statsd daemon
 #
@@ -36,7 +36,7 @@ start() {
 	if [ ! -f /var/lock/subsys/$NAME ]; then
 	    echo -n $"Starting $NAME daemon: "
         # daemon
-        $NODE_EXE $INSTALL_DIR/stats.js $INSTALL_DIR/ls-config.js >/var/log/statsd.log 2>&1 &
+        $NODE_EXE $INSTALL_DIR/stats.js $INSTALL_DIR/config.js >/var/log/statsd.log 2>&1 &
 	    RETVAL=$?
         if [ $RETVAL -eq 0 ]; then
             touch /var/lock/subsys/$NAME

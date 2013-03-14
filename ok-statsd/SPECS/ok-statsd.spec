@@ -3,7 +3,7 @@
 
 # After we run "ant package" we'll find the distribution here
 %define statsd_version 0.5.0
-%define ok_version 01
+%define ok_version 02
 %define statsd_revision 270a96a79c4fbcc20bdf98f543e25229623ffb48
 
 #----------------------------------------------------------------------------------
@@ -35,9 +35,13 @@ echo "Build not needed..."
 %install
 # Install js files
 %{__mkdir_p} %{buildroot}%{statsd_home}
+%{__mkdir_p} %{buildroot}%{statsd_home}/bin
+%{__mkdir_p} %{buildroot}%{statsd_home}/lib
+%{__mkdir_p} %{buildroot}%{statsd_home}/backends
+
 %{__install} -Dp -m0644 stats.js %{buildroot}%{statsd_home}
 %{__install} -Dp -m0755 bin/statsd %{buildroot}%{statsd_home}/bin
-%{__install} -Dp -m0644 lib/config.js lib/logger.js lib/set.js %{buildroot}%{statsd_home}/lib
+%{__install} -Dp -m0644 lib/{config.js,logger.js,set.js,process_metrics.js} %{buildroot}%{statsd_home}/lib
 %{__install} -Dp -m0644 backends/{console.js,graphite.js} %{buildroot}%{statsd_home}/backends
 
 # Install init script
