@@ -1,5 +1,5 @@
 %define ruby_version  1.9.3
-%define ruby_patch    p327
+%define ruby_patch    p385
 
 Name:       ok-ruby-1.9
 Version:    %{ruby_version}%{ruby_patch}
@@ -73,5 +73,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}
 
 %changelog
+* Sat Apr 27 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.9.3-p385-1
+- Updated ruby and the patches to 1.9.3-p385.
+
 * Fri Feb 8 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.9.3-p327-1
 - Initial release for Ruby 1.9.3-p327 with falcon-gc patch.
