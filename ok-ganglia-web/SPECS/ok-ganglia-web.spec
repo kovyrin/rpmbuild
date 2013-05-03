@@ -1,5 +1,5 @@
-%define ganglia_web_version 3.5.4
-%define package_revision 02
+%define ganglia_web_version 3.5.7
+%define package_revision 01
 
 Summary: Ganglia Distributed Monitoring System Web Interface
 Name: ok-ganglia-web
@@ -73,5 +73,8 @@ cp -ax conf/* $RPM_BUILD_ROOT/var/lib/ganglia/conf
 %__rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Thu May 3 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
+- New upstream release for Ganglia Web 3.5.7.
+
 * Thu Feb 14 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
 - Initial release for Ganglia Web 3.5.4.
