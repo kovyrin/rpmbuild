@@ -9,6 +9,8 @@ GMOND=/opt/ganglia/sbin/gmond
 TMPDIR=/dev/shm
 export TMPDIR
 
+PID_FILE=/var/run/gmond.pid
+
 . /etc/rc.d/init.d/functions
 
 RETVAL=0
@@ -18,7 +20,7 @@ case "$1" in
       echo -n "Starting GANGLIA gmond: "
       [ -f $GMOND ] || exit 1
 
-      daemon $GMOND
+      daemon $GMOND --pid-file=$PID_FILE
       RETVAL=$?
       echo
       [ $RETVAL -eq 0 ] && touch /var/lock/subsys/gmond
@@ -26,7 +28,7 @@ case "$1" in
 
   stop)
       echo -n "Shutting down GANGLIA gmond: "
-      killproc gmond
+      killproc -p "$PID_FILE" gmond
       RETVAL=$?
       echo
       [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/gmond
@@ -39,7 +41,7 @@ case "$1" in
       ;;
 
   status)
-      status gmond
+      status -p "$PIDFILE" gmond
       RETVAL=$?
       ;;
 

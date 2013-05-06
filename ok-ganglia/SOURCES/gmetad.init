@@ -11,6 +11,8 @@ test -f /etc/sysconfig/gmetad && source /etc/sysconfig/gmetad
 
 export RRDCACHED_ADDRESS
 
+PID_FILE=/var/run/gmetad.pid
+
 RETVAL=0
 
 case "$1" in
@@ -18,7 +20,7 @@ case "$1" in
       echo -n "Starting GANGLIA gmetad: "
       [ -f $GMETAD ] || exit 1
 
-      daemon $GMETAD
+      daemon $GMETAD --pid-file=$PID_FILE
       RETVAL=$?
       echo
       [ $RETVAL -eq 0 ] && touch /var/lock/subsys/gmetad
@@ -26,7 +28,7 @@ case "$1" in
 
   stop)
       echo -n "Shutting down GANGLIA gmetad: "
-      killproc $GMETAD
+      killproc -p "$PID_FILE" $GMETAD
       RETVAL=$?
       echo
       [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/gmetad
@@ -39,7 +41,7 @@ case "$1" in
       ;;
 
   status)
-      status $GMETAD
+      status -p "$PID_FILE" $GMETAD
       RETVAL=$?
       ;;
 

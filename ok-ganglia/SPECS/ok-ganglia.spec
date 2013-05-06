@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 %define ganglia_version 3.5.0
-%define package_revision 05
+%define package_revision 06
 
 Summary: Ganglia Distributed Monitoring System
 Name: ok-ganglia
@@ -98,6 +98,9 @@ rm -f $RPM_SOURCE_DIR/opt/ganglia/etc/conf.d/example.*
 %__rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Mon May 3 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
+- Updated startup scripts to use pid files for process management.
+
 * Mon Mar 4 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
 - Enable graphite integration.
 
