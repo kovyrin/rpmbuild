@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 %define ganglia_version 3.5.0
-%define package_revision 06
+%define package_revision 07
 
 Summary: Ganglia Distributed Monitoring System
 Name: ok-ganglia
@@ -80,8 +80,17 @@ gmond/gmond -t > $RPM_BUILD_ROOT/opt/ganglia/etc/gmond.conf
 %__cp -f gmond/modules/conf.d/* $RPM_BUILD_ROOT/opt/ganglia/etc/conf.d
 
 # Do some cleanup of installed files
-rm -f $RPM_SOURCE_DIR/opt/ganglia/etc/conf.d/*.in
-rm -f $RPM_SOURCE_DIR/opt/ganglia/etc/conf.d/example.*
+rm -f $RPM_BUILD_ROOT/opt/ganglia/etc/conf.d/*.in
+rm -f $RPM_BUILD_ROOT/opt/ganglia/etc/conf.d/example.*
+
+# Copy the python metric modules and .conf files
+%__cp -f gmond/python_modules/conf.d/*.pyconf* $RPM_BUILD_ROOT/opt/ganglia/etc/conf.d/
+find $RPM_BUILD_ROOT/opt/ganglia/etc/conf.d/ -name '*.pyconf' | xargs -I xx -- mv "xx" "xx.disabled"
+%{__python} -c 'import compileall; compileall.compile_dir("gmond/python_modules", 1, "/", 1)' > /dev/null
+%{__python} -O -c 'import compileall; compileall.compile_dir("gmond/python_modules", 1, "/", 1)' > /dev/null
+
+%__install -d -m 0755 $RPM_BUILD_ROOT/opt/ganglia/lib/ganglia/python_modules/
+%__cp -f gmond/python_modules/*/*.{py,pyc,pyo} $RPM_BUILD_ROOT/opt/ganglia/lib/ganglia/python_modules/
 
 %files
 %defattr(-,root,root)
@@ -98,6 +107,9 @@ rm -f $RPM_SOURCE_DIR/opt/ganglia/etc/conf.d/example.*
 %__rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Tue May 7 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
+- Added python modules for gmond.
+
 * Mon May 3 2013 Oleksiy Kovyrin <alexey@kovyrin.net>
 - Updated startup scripts to use pid files for process management.
 
