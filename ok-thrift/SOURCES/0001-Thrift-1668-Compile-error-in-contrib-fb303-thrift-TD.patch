@@ -1,0 +1,27 @@
+From c11b448e213f9583e58283ab591f5699bda3db87 Mon Sep 17 00:00:00 2001
+From: Jean-Sebastien Delfino <jsdelfino@apache.org>
+Date: Wed, 1 Aug 2012 07:24:59 -0700
+Subject: [PATCH] Thrift-1668: Compile error in contrib/fb303,
+ thrift/TDispatchProcessor.h: No such file or directory. Fix
+ include path in cpp/Makefile.am.
+
+---
+ contrib/fb303/cpp/Makefile.am |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/contrib/fb303/cpp/Makefile.am b/contrib/fb303/cpp/Makefile.am
+index 748d329..670d62d 100644
+--- a/contrib/fb303/cpp/Makefile.am
++++ b/contrib/fb303/cpp/Makefile.am
+@@ -38,7 +38,7 @@ endif
+ 
+ AM_CPPFLAGS = -I..
+ AM_CPPFLAGS += -Igen-cpp
+-AM_CPPFLAGS += -I$(thrift_home)/include/thrift 
++AM_CPPFLAGS += -I$(thrift_home)/include
+ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+ AM_CPPFLAGS += $(FB_CPPFLAGS) $(DEBUG_CPPFLAGS)
+ 
+-- 
+1.7.9.5
+
