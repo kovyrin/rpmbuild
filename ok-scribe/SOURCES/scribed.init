@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# scribed - this script starts and stops the scribed daemon
+#
+# chkconfig:   - 84 16 
+# description:  Scribe is a server for aggregating log data \
+#               streamed in real time from a large number of \
+#               servers.
+# processname: scribed
+# config:      /opt/scribe/conf/scribed.conf
+# config:      /etc/sysconfig/scribed
+# pidfile:     /var/run/scribed.pid
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+SCRIBED_CONFIG=/opt/scribe/conf/scribe.conf
+
+[ -e /etc/sysconfig/scribed ] && . /etc/sysconfig/scribed
+
+if [ ! -f $SCRIBED_CONFIG ]; then
+    echo "No config found ($SCRIBED_CONFIG)!"
+    exit 1
+fi
+
+lockfile=/var/lock/subsys/scribed
+pidfile=/var/run/scribed.pid
+
+start() {
+    echo -n $"Starting scribed: "
+    runuser -s /bin/bash - scribe -c "/opt/scribe/bin/scribed -c $SCRIBED_CONFIG >> /var/log/scribe/scribe.log 2>&1 &"
+    retval=$?
+    if [ $retval -eq 0 ]; then
+      touch $lockfile
+      pid=$(pidof scribed)
+      echo $pid > $pidfile
+      echo "OK"
+    else
+      rm -f $pidfile
+      echo "Failed!"
+    fi
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping scribed: "
+    killproc scribed
+    retval=$?
+    echo
+    if [ $retval -eq 0 ]; then
+      rm -f $lockfile
+      rm -f $pidfile
+    fi
+    return $retval
+}
+
+restart() {
+    stop
+    sleep 1
+    start
+}
+
+case "$1" in
+    start|stop|restart)
+        $1
+        ;;
+    status)
+	status -p $pidfile
+	;;
+    *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 2
+esac
