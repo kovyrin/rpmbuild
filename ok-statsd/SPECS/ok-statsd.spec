@@ -2,9 +2,9 @@
 %define statsd_home /opt/statsd
 
 # After we run "ant package" we'll find the distribution here
-%define statsd_version 0.5.0
+%define statsd_version 0.6.0
 %define ok_version 02
-%define statsd_revision 270a96a79c4fbcc20bdf98f543e25229623ffb48
+%define statsd_revision d16d744e6424dfd519dc71795a212ad1c08c3114
 
 #----------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ License:        Etsy open source license
 URL:            https://github.com/etsy/statsd
 Vendor:         Etsy
 Packager:       Oleksiy Kovyrin <alexey@kovyrin.net>
-Source0:        statsd-%{statsd_revision}.tar.gz
+Source0:        statsd-%{statsd_revision}.zip
 Source1:        statsd.init
 BuildArch:      noarch
 
@@ -41,7 +41,7 @@ echo "Build not needed..."
 
 %{__install} -Dp -m0644 stats.js %{buildroot}%{statsd_home}
 %{__install} -Dp -m0755 bin/statsd %{buildroot}%{statsd_home}/bin
-%{__install} -Dp -m0644 lib/{config.js,logger.js,set.js,process_metrics.js} %{buildroot}%{statsd_home}/lib
+%{__install} -Dp -m0644 lib/*.js %{buildroot}%{statsd_home}/lib
 %{__install} -Dp -m0644 backends/{console.js,graphite.js} %{buildroot}%{statsd_home}/backends
 
 # Install init script
