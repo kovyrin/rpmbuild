@@ -7,11 +7,11 @@ end
 
 # Find current rpm name
 def rpm_name
-  Pathname(Rake.application.original_dir).relative_path_from(repo_top_dir).to_s.split('/').first
+  name =Pathname(Rake.application.original_dir).relative_path_from(repo_top_dir).to_s.split('/').first
+  # Make sure we're running from an rpm dir
+  raise "Please run rake from an rpm directory!" if name == '.'
+  return name
 end
-
-# Make sure we're running from an rpm dir
-raise "Please run rake from an rpm directory!" if rpm_name == '.'
 
 # Find top directory for the rpm
 def top_dir
