@@ -1,7 +1,7 @@
 %define openresty_home /opt/openresty
 
 %define openresty_version 1.2.7.8
-%define openresty_revision 03
+%define openresty_revision 05
 
 #---------------------------------------------------------------------------------
 Name:           ok-openresty
@@ -43,7 +43,6 @@ lots of 3rd-party Nginx modules, as well as most of their external dependencies.
              --with-http_ssl_module \
              --with-http_gzip_static_module \
              --with-http_stub_status_module \
-             --with-cc-opt='-O2 -g' \
              --with-luajit \
              --with-debug
 
@@ -53,6 +52,7 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 
 make DESTDIR=%{buildroot} install
+mv %{buildroot}%{openresty_home}/nginx/conf %{buildroot}%{openresty_home}/nginx/conf.example
 
 install -D -m 755 $RPM_SOURCE_DIR/nginx-openresty.init %{buildroot}/etc/rc.d/init.d/nginx-openresty
 install -D -m 644 $RPM_SOURCE_DIR/nginx-openresty.sysconfig %{buildroot}/etc/sysconfig/nginx-openresty
@@ -79,5 +79,8 @@ rm -rf %{buildroot}
 /etc/sysconfig/nginx-openresty
 
 %changelog
+* Mon May 20 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.2.7.8-05
+- Do not touch configs in /opt/openresty/nginx/conf.
+
 * Fri May 17 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.2.7.8-03
 - Initial release for ngx_openresty 1.2.7.8.
