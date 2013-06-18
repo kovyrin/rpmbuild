@@ -1,0 +1,85 @@
+#! /bin/bash
+
+### BEGIN INIT INF
+# Provides:          logstash
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:
+# Default-Stop:      0 1 6
+# Short-Description: Starts logstash agent
+# chkconfig: - 80 15
+# Description: Logstash Agent
+### END INIT INFO
+
+. /etc/rc.d/init.d/functions
+
+LOGSTASH_HOME=/opt/logstash
+LOGSTASH_USER=logstash
+DAEMON=${LOGSTASH_HOME}/bin/logstash
+
+[ -f /etc/sysconfig/logstash ] && . /etc/sysconfig/logstash
+
+NAME=$(basename $0)
+SERVICE=agent
+
+PID_FILE=${PIDFILE:-/var/run/${NAME}/${NAME}.pid}
+LOCK_FILE=${LOCKFILE:-/var/lock/subsys/${NAME}}
+LOG_FILE=${LOGFILE:-/var/log/logstash/${NAME}.log}
+
+LOGSTASH_PATH_CONF=${LOGSTASH_PATH_CONF:-/etc/${NAME}/conf.d}
+LOGSTASH_PATH_PLUGINS=${LOGSTASH_PATH_PLUGINS:-${LOGSTASH_HOME}/plugins}
+LOGSTASH_LOGLEVEL=${LOGSTASH_LOGLEVEL:-"warn"}
+
+# NFILES=${NFILES:-32768}
+
+DAEMON_OPTS="\
+  -P ${PID_FILE} \
+  -p ${LOGSTASH_PATH_PLUGINS} \
+  -l ${LOG_FILE} \
+  -f ${LOGSTASH_PATH_CONF} \
+  -v $LOGSTASH_LOGLEVEL \
+"
+
+start() {
+    echo -n $"Starting ${NAME}: "
+    # ulimit -n $NFILES
+    export JAVA_OPTS="$JAVA_OPTS $LOGSTASH_JAVA_OPTS"
+    daemon --pidfile=${PID_FILE} --user $LOGSTASH_USER $DAEMON $SERVICE $DAEMON_OPTS
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $LOCK_FILE
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping ${NAME}: "
+    killproc -p ${PID_FILE} -d 10 $DAEMON
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${LOCK_FILE} ${PID_FILE}
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status -p ${PID_FILE} $DAEMON
+        RETVAL=$?
+        ;;
+    restart|force-reload)
+        stop
+        start
+        ;;
+    *)
+        N=/etc/init.d/${NAME}
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        RETVAL=2
+        ;;
+esac
+
+exit $RETVAL

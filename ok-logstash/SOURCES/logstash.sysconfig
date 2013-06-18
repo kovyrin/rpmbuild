@@ -1,0 +1,10 @@
+#LOGSTASH_LOGFILE=/var/log/logstash/logstash.log
+#LOGSTASH_PATH_CONF=/etc/logstash/conf.d
+#LOGSTASH_PATH_PLUGINS=/opt/logstash/plugins
+#LOGSTASH_JAVA_OPTS="-Djava.io.tmpdir=/opt/logstash/tmp"
+#LOGSTASH_USER=logstash
+
+# Log level may be one of three values.
+#LOGSTASH_LOGLEVEL=warn
+#LOGSTASH_LOGLEVEL=info
+#LOGSTASH_LOGLEVEL=debug
