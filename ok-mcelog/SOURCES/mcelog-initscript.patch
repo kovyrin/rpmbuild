@@ -1,0 +1,83 @@
+diff --git a/Makefile b/Makefile
+index bc3e90a..2d7869a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -56,6 +56,7 @@ install: mcelog
+ 	install -m 755 -p mcelog $(DESTDIR)${prefix}/sbin/mcelog
+ 	install -m 644 -p mcelog.8 $(DESTDIR)${prefix}/share/man/man8
+ 	install -m 644 -p -b mcelog.conf $(DESTDIR)${etcprefix}/etc/mcelog/mcelog.conf
++	install -p mcelog.sysconfig ${etcprefex}/etc/sysconfig/mcelogd
+ 	for i in ${TRIGGERS} ; do 						\
+ 		install -m 755 -p -b triggers/$$i $(DESTDIR)${etcprefix}/etc/mcelog ; 	\
+ 	done
+diff --git a/mcelog.init b/mcelog.init
+index 0abe786..f3abd5e 100755
+--- a/mcelog.init
++++ b/mcelog.init
+@@ -15,19 +15,11 @@
+ # Description:          Start the mcelog hardware error logging. 
+ #                       This logs and handles CPU hardware errors on x86 systems.
+ ### END INIT INFO
++# pull in sysconfig settings
++[ -f /etc/sysconfig/mcelogd ] && . /etc/sysconfig/mcelogd
+ 
+-# put this is sysconfig
+-
+-# mcelog mode
+-# valid values: daemon, trigger, cron
+-# Recommended value daemon
+-MCELOG_MODE=daemon
+-
+-# additional options to pass to the daemon
+-# this only works in daemon mode
+-# see the manpage for details. settings can be also
+-# set in /etc/mcelog.conf
+-MCELOG_OPTIONS=""
++# Source function library.
++. /etc/init.d/functions
+ 
+ # private settings
+ MCELOG=${MCELOG:-/usr/sbin/mcelog}
+@@ -53,7 +45,7 @@ case "$1" in
+ start)
+ 	if [ "$MCELOG_MODE" = "daemon" ] ; then
+ 		echo "Starting mcelog daemon"
+-		startproc $MCELOG --daemon $MCELOG_OPTIONS
++		daemon $MCELOG --daemon $MCELOG_OPTIONS
+ 	elif [ -f "$TRIGGER" ] ; then
+ 		echo $MCELOG > "$TRIGGER"
+ 	else
+@@ -63,7 +55,7 @@ start)
+ stop)
+ 	if [ "$MCELOG_MODE" = "daemon" ] ; then
+ 		echo "Stopping mcelog"
+-		killproc -TERM $MCELOG
++		killproc $MCELOG -TERM
+ 	elif [ "$MCELOG_MODE" = "trigger" -a -f "$TRIGGER" ]; then 
+ 		echo "" > "$TRIGGER"
+ 	else
+@@ -86,7 +78,7 @@ force-reload)
+ status)
+ 	if [ "$MCELOG_MODE" = "daemon" ] ; then
+ 		echo "Checking for mcelog"
+-		checkproc $MCELOG
++		status $MCELOG
+ 	fi
+ 	;;
+ *)
+diff --git a/mcelog.sysconfig b/mcelog.sysconfig
+new file mode 100644
+index 0000000..0499f33
+--- /dev/null
++++ b/mcelog.sysconfig
+@@ -0,0 +1,10 @@
++# mcelog mode
++# valid values: daemon, trigger, cron
++# Recommended value daemon
++MCELOG_MODE=daemon
++
++# additional options to pass to the daemon
++# this only works in daemon mode
++# see the manpage for details. settings can be also
++# set in /etc/mcelog.conf
++MCELOG_OPTIONS=""

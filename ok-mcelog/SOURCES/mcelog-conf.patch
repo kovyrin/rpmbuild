@@ -1,0 +1,19 @@
+diff --git a/mcelog.conf b/mcelog.conf
+index 1bab3ee..3288f02 100644
+--- a/mcelog.conf
++++ b/mcelog.conf
+@@ -88,7 +88,7 @@ client-user = root
+ #client-group = root
+ # path to the unix socket for client<->server communication
+ # when no socket-path is configured the server will not start
+-#socket-path = /var/run/mcelog-client
++socket-path = /var/run/mcelog-client
+ # when mcelog starts it checks if a server is already running. timeout
+ # for this check.
+ #initial-ping-timeout = 2 
+@@ -158,4 +158,4 @@ memory-ce-action = soft
+ # Maximum number of running triggers
+ children-max = 2
+ # execute triggers in this directory
+-directory = /etc/mcelog
++directory = /etc/mcelog/triggers

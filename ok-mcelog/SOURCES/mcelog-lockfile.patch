@@ -1,0 +1,41 @@
+diff --git a/mcelog.init b/mcelog.init
+index f3abd5e..996cd8e 100755
+--- a/mcelog.init
++++ b/mcelog.init
+@@ -24,6 +24,7 @@
+ # private settings
+ MCELOG=${MCELOG:-/usr/sbin/mcelog}
+ TRIGGER=/sys/devices/system/machinecheck/machinecheck0/trigger
++LOCKFILE="/var/lock/subsys/mcelogd"
+ [ ! -x $MCELOG ] && ( echo "mcelog not found" ; exit 1 )
+ [ ! -r /dev/mcelog ] && ( echo "/dev/mcelog not active" ; exit 0 )
+ 
+@@ -43,11 +44,17 @@ esac
+ 
+ case "$1" in
+ start)
++	if [ -f $LOCKFILE ]; then
++		exit 0
++	fi
++
+ 	if [ "$MCELOG_MODE" = "daemon" ] ; then
+ 		echo "Starting mcelog daemon"
+ 		daemon $MCELOG --daemon $MCELOG_OPTIONS
++		touch $LOCKFILE
+ 	elif [ -f "$TRIGGER" ] ; then
+ 		echo $MCELOG > "$TRIGGER"
++		touch $LOCKFILE
+ 	else
+ 		echo No machine check capability
+ 	fi
+@@ -56,8 +63,10 @@ stop)
+ 	if [ "$MCELOG_MODE" = "daemon" ] ; then
+ 		echo "Stopping mcelog"
+ 		killproc $MCELOG -TERM
++		rm -f $LOCKFILE
+ 	elif [ "$MCELOG_MODE" = "trigger" -a -f "$TRIGGER" ]; then 
+ 		echo "" > "$TRIGGER"
++		rm -f $LOCKFILE
+ 	else
+ 		echo mcelog not running
+ 	fi
