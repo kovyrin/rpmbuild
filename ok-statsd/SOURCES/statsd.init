@@ -6,7 +6,7 @@
 #
 # chkconfig: 2345 20 80
 # description: Frontend aggregatation of messages destined for graphite daemon
-# processname: statsd
+# pidfile:     /var/run/statsd.pid
 
 ### BEGIN INIT INFO
 # Provides: statsd
@@ -21,9 +21,32 @@
 NAME=statsd
 INSTALL_DIR=/opt/statsd
 NODE_EXE=/usr/bin/node
+PID_FILE=/var/run/statsd.pid
+START_FILE=$INSTALL_DIR/stats.js
+CONFIG_FILE=$INSTALL_DIR/config.js
+LOG_FILE=/var/log/statsd.log
+USER=statsd
 
-[ -x $NODE_EXE ] || exit 0
-[ -f $INSTALL_DIR/stats.js ] || exit 0
+if [ ! -x "$NODE_EXE" ]; then
+  echo "Can't find node.js executable at '$NODE_EXE'"
+  exit 1
+fi
+
+if [ ! -f "$START_FILE" ]; then
+  echo "Can't find StatsD at '$START_FILE'"
+  exit 1
+fi
+
+if [ ! -f "$CONFIG_FILE" ]; then
+  echo "Can't find StatsD configuration file at '$CONFIG_FILE'"
+  exit 1
+fi
+
+## Check to see if we are running as root first.
+if [ "$(id -u)" != "0" ]; then
+  echo "This script must be run as root"
+  exit 1
+fi
 
 RETVAL=0
 
@@ -32,84 +55,80 @@ RETVAL=0
 #
 
 start() {
-	# Check if it is already running
-	if [ ! -f /var/lock/subsys/$NAME ]; then
-	    echo -n $"Starting $NAME daemon: "
-        # daemon
-        $NODE_EXE $INSTALL_DIR/stats.js $INSTALL_DIR/config.js >/var/log/statsd.log 2>&1 &
-	    RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then
-            touch /var/lock/subsys/$NAME
-            echo_success
-        else
-            echo_failure
-        fi
-	    echo
-	fi
-	return $RETVAL
+  # Check if it is already running
+  if [ -f "$PID_FILE" ]; then
+    if ps -o pid= -p "$(cat $PID_FILE)" &> /dev/null; then
+      echo "ERROR: server is already started"
+      return 1
+    else
+      echo "WARNING: stale PID file found, removing"
+    fi
+  fi
+
+  echo -n $"Starting $NAME daemon: "
+  # Creating pid file
+  touch $PID_FILE && chown $USER $PID_FILE
+  # daemon
+  sudo -u $USER /usr/bin/nohup /bin/bash -c "$NODE_EXE $START_FILE $CONFIG_FILE & echo \${!} > $PID_FILE" >> $LOG_FILE 2>&1
+  RETVAL=$?
+  if [ $RETVAL -eq 0 ]; then
+    echo_success
+  else
+    rm -f $PID_FILE
+    echo_failure
+  fi
+  echo
+  return $RETVAL
 }
 
 stop() {
-	echo -n $"Stopping $NAME daemon: "
-	RETVAL=0
-    pid=$(ps aux | grep stats.js | grep node | awk '{print $2}')
-    if [ "$pid" != "" ]; then
-        kill $pid
-	    RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then
-            rm -f /var/lock/subsys/$NAME
-            echo_success
-        else
-            echo_failure
-        fi
-    else
-        rm -f /var/lock/subsys/$NAME
-    fi
-	echo
-    return $RETVAL
+  echo -n $"Stopping $NAME daemon: "
+  killproc -p $PID_FILE $NAME
+  RETVAL=$?
+  echo
+  return $RETVAL
 }
 
-
 restart() {
-	stop
-	start
-}	
+  stop
+  start
+}
 
 reload() {
-	trap "" SIGHUP
-	killall -HUP stats.js
-}	
+  if [ -f "$PID_FILE" ]; then
+    echo -n $"Reloading $NAME configuration: "
+    kill -HUP "$(cat $PID_FILE)" &> /dev/null
+    echo_success
+    echo
+  else
+    echo "ERROR: server is not started"
+  fi
+}
 
 case "$1" in
 start)
-	start
-	;;
+  start
+  ;;
 stop)
-	stop
-	;;
+  stop
+  ;;
 reload)
-	reload
-	;;
+  reload
+  ;;
 restart)
-	restart
-	;;
+  restart
+  ;;
 condrestart)
-	if [ -f /var/lock/subsys/$NAME ]; then
-	    restart
-	fi
-	;;
+  if [ -f "$PID_FILE" ]; then
+      restart
+  fi
+  ;;
 status)
-	if [ -f /var/lock/subsys/$NAME ]; then
-        echo "$NAME is running"
-        exit 0
-    else
-        echo "$NAME is stopped"
-        exit 3
-    fi
+  status -p $PID_FILE $NAME
 	;;
 *)
-	echo $"Usage: $0 {start|stop|status|restart|condrestart|reload}"
-	exit 1
+  echo $"Usage: $0 {start|stop|status|restart|condrestart|reload}"
+  exit 1
 esac
 
 exit $RETVAL
