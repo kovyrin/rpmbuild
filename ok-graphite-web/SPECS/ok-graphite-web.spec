@@ -5,8 +5,8 @@
 
 #---------------------------------------------------------------------------------------------------
 %define graphite_version 0.9.10
-%define ok_version 01
-%define graphite_revision f83a58af1e4941367c928ff3186c51d7a157014d
+%define ok_version 05
+%define graphite_revision 50302c837d552611c194040632d5aac81561a787
 
 Name:           ok-graphite-web
 Version:        %{graphite_version}
@@ -102,6 +102,9 @@ PYTHONPATH=$PYTHONPATH:/opt/graphite/webapp %{__python} /opt/graphite/webapp/gra
 %attr(775,graphite,apache) %dir /opt/graphite/storage/log/webapp
 
 %changelog
+* Thu Jul 9 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.10-05
+- Upgrade to the latest 0.9.x branch revision + fix for movingXXX functions (PR#366).
+
 * Thu Oct 4 2012 Dan Carley <dan.carley@gmail.com> - 0.9.10-3
 - Require bitmap-fonts on EL6 to resolve MemoryError exception on render.
 
