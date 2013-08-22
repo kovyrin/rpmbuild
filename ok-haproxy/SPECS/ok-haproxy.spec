@@ -1,6 +1,6 @@
 %define haproxy_home /opt/haproxy
 
-%define haproxy_version 1.4.22
+%define haproxy_version 1.4.24
 %define haproxy_revision 01
 
 #---------------------------------------------------------------------------------
@@ -57,3 +57,7 @@ ln -sf %{haproxy_home}/bin/haproxy-%{haproxy_version} %{haproxy_home}/bin/haprox
 #---------------------------------------------------------------------------------
 %clean
 rm -rf %{buildroot}
+
+%changelog
+* Thu Aug 22 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.4.24-01
+- Upgraded haproxy to 1.4.24.
