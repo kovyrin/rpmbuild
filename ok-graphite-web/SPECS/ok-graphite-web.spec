@@ -4,9 +4,9 @@
 %define __service  /sbin/service
 
 #---------------------------------------------------------------------------------------------------
-%define graphite_version 0.9.10
-%define ok_version 05
-%define graphite_revision 50302c837d552611c194040632d5aac81561a787
+%define graphite_version 0.9.12
+%define ok_version 01
+%define graphite_revision 06193935274e68e3a537f479296ee6cc7e7b892f
 
 Name:           ok-graphite-web
 Version:        %{graphite_version}
@@ -18,12 +18,7 @@ URL:            https://launchpad.net/graphite
 Vendor:         Chris Davis <chrismd@gmail.com>
 Packager:       Dan Carley <dan.carley@gmail.com>
 
-Source0:        graphite-web-%{graphite_revision}.tar.gz
-#Patch0:         graphite-web-setup.patch
-#Patch1:         graphite-web-settings.patch
-#Patch2:         graphite-web-vhost.patch
-#Patch3:         graphite-web-wsgi.patch
-#Patch4:         graphite-web-python24compat.patch
+Source0:        graphite-web-%{graphite_version}-%{graphite_revision}.tar.gz
 
 BuildArch:      noarch
 
@@ -102,6 +97,9 @@ PYTHONPATH=$PYTHONPATH:/opt/graphite/webapp %{__python} /opt/graphite/webapp/gra
 %attr(775,graphite,apache) %dir /opt/graphite/storage/log/webapp
 
 %changelog
+* Mon Aug 26 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-01
+- Upgrade to the latest 0.9.x branch revision (0.9.12+).
+
 * Thu Jul 9 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.10-05
 - Upgrade to the latest 0.9.x branch revision + fix for movingXXX functions (PR#366).
 
