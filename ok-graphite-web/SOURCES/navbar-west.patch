@@ -1,0 +1,13 @@
+diff --git a/graphite-web/webapp/content/js/dashboard.js b/graphite-web/webapp/content/js/dashboard.js
+index 7099e33..c8606d8 100644
+--- a/graphite-web/webapp/content/js/dashboard.js
++++ b/graphite-web/webapp/content/js/dashboard.js
+@@ -23,7 +23,7 @@ var cookieProvider = new Ext.state.CookieProvider({
+   path: "/dashboard"
+ });
+ 
+-var NAV_BAR_REGION = cookieProvider.get('navbar-region') || 'north';
++var NAV_BAR_REGION = cookieProvider.get('navbar-region') || 'west';
+ 
+ var CONFIRM_REMOVE_ALL = cookieProvider.get('confirm-remove-all') != 'false';
+ 

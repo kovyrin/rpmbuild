@@ -5,7 +5,7 @@
 
 #---------------------------------------------------------------------------------------------------
 %define graphite_version 0.9.12
-%define ok_version 01
+%define ok_version 02
 %define graphite_revision 06193935274e68e3a537f479296ee6cc7e7b892f
 
 Name:           ok-graphite-web
@@ -19,6 +19,7 @@ Vendor:         Chris Davis <chrismd@gmail.com>
 Packager:       Dan Carley <dan.carley@gmail.com>
 
 Source0:        graphite-web-%{graphite_version}-%{graphite_revision}.tar.gz
+Patch0:         navbar-west.patch
 
 BuildArch:      noarch
 
@@ -41,8 +42,7 @@ scalability.
 
 %prep
 %setup -q -n graphite-web
-
-#%patch0 -p1
+%patch0 -p2
 #%patch1 -p1
 #%patch2 -p1
 #%patch3 -p1
@@ -97,6 +97,9 @@ PYTHONPATH=$PYTHONPATH:/opt/graphite/webapp %{__python} /opt/graphite/webapp/gra
 %attr(775,graphite,apache) %dir /opt/graphite/storage/log/webapp
 
 %changelog
+* Mon Aug 26 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-02
+- Move navbar to west by default.
+
 * Mon Aug 26 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-01
 - Upgrade to the latest 0.9.x branch revision (0.9.12+).
 
