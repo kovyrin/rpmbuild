@@ -14,7 +14,7 @@ them whenever and wherever I needed. As a bonus I'll keep improving the recipes 
 over time instead of creating them from scratch every time.
 
 **Disclaimer:** This is not an opensource project, no bug reports will be accepted for the stuff in this repo,
-I do not guarantee license purity of this stuff and do not give any guarantees. If you want to ise it -
+I do not guarantee license purity of this stuff and do not give any guarantees. If you want to use it -
 feel free to. If you have a patch - feel free to send a pull request.
 
 
