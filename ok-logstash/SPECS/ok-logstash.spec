@@ -8,8 +8,8 @@
 #---------------------------------------------------------------------------------------------------
 %define base_install_dir /opt/logstash
 
-%define logstash_version 1.1.12
-%define package_revision 01
+%define logstash_version 1.1.13
+%define package_revision 02
 
 Name:           ok-logstash
 Version:        %{logstash_version}
@@ -23,8 +23,6 @@ Source0:        http://semicomplete.com/files/logstash/logstash-%{version}-flatj
 Source1:        logstash.init
 Source2:        logstash.logrotate
 Source3:        logstash.sysconfig
-Source4:        logstash.wrapper
-Source5:        logstash.conf
 
 Requires:       java
 
@@ -44,15 +42,12 @@ true
 %install
 rm -rf $RPM_BUILD_ROOT
 
+%{__mkdir} -p %{buildroot}%{base_install_dir}
 %{__mkdir} -p %{buildroot}%{base_install_dir}/lib
-%{__install} -m 755 %{SOURCE0} %{buildroot}%{base_install_dir}/lib/
+%{__install} -m 755 %{SOURCE0} %{buildroot}%{base_install_dir}/lib/logstash.jar
 
-%{__mkdir} -p %{buildroot}%{base_install_dir}/bin
-%{__install} -m 755 %{SOURCE4} %{buildroot}%{base_install_dir}/bin/logstash
-
-# config
+# config dir
 %{__mkdir} -p %{buildroot}%{_sysconfdir}/logstash/conf.d
-%{__install} -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/logstash/conf.d/logstash.conf
 
 # plugins & patterns
 %{__mkdir} -p %{buildroot}%{base_install_dir}/plugins
@@ -106,10 +101,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/logrotate.d/logstash
 
 %config(noreplace) %{_sysconfdir}/sysconfig/logstash
-%config(noreplace) %{_sysconfdir}/logstash/conf.d/logstash.conf
 
 %{base_install_dir}/lib/*
-%{base_install_dir}/bin/*
 
 %defattr(-,logstash,logstash,-)
 %{_localstatedir}/run/logstash
@@ -118,6 +111,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jan 6 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.1.13-02
+- Updated upstream version to 1.1.13
+- Replaced startup script with a better one
+
 * Fri May 24 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.1.12-01
 - Added to ok packages, updated upstream version to 1.1.12
 
