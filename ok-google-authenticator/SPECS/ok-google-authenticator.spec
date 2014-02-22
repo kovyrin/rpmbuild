@@ -1,4 +1,4 @@
-%define google_auth_version 1.0
+%define google_auth_version github
 %define package_revision 01
 
 Name:           ok-google-authenticator
@@ -33,13 +33,10 @@ algorithm specified in RFC 4226 and the Time-based One-time Password
 (TOTP) algorithm currently in draft.
 
 %prep
-%setup -q -n libpam-google-authenticator-1.0
+%setup -q -n libpam-google-authenticator-github
 
 %build
 make CFLAGS="${CFLAGS:-%optflags}" LDFLAGS=-ldl %{?_smp_mflags}
-
-%check
-./pam_google_authenticator_unittest
 
 %install
 rm -rf $RPM_BUILD_ROOT
