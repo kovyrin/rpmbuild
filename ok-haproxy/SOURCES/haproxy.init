@@ -52,7 +52,7 @@ restart() {
   fi
 
   echo -n "Restarting $BASENAME: "
-  /opt/haproxy/bin/haproxy -f /opt/haproxy/conf/haproxy.cfg -p /var/run/$BASENAME.pid -st $(</var/run/$BASENAME.pid)
+  /opt/haproxy/bin/haproxy -f /opt/haproxy/conf/haproxy.cfg -p /var/run/$BASENAME.pid -sf $(</var/run/$BASENAME.pid)
   RETVAL=$?
   echo
   return $RETVAL
