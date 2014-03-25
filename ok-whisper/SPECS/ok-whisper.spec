@@ -1,8 +1,8 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define whisper_version 0.9.10
-%define ok_version 01
-%define whisper_revision 06afbcd7423dc84454b3c01df913819bd889b7db
+%define whisper_version 0.9.12
+%define ok_version 02
+%define whisper_revision 1d99a3be4f5b147c0a96419911743e3fb4696bfa
 
 Name:           ok-whisper
 Version:        %{whisper_version}
@@ -13,7 +13,10 @@ License:        Apache Software License 2.0
 URL:            https://launchpad.net/graphite
 Vendor:         Chris Davis <chrismd@gmail.com>
 Packager:       Dan Carley <dan.carley@gmail.com>
-Source0:        whisper-%{whisper_revision}.tar.gz
+
+Source0:        whisper-0.9.x-%{whisper_revision}.tar.gz
+Patch0:         whisper-compat.patch
+
 BuildArch:      noarch
 
 BuildRequires:  python python-devel python-setuptools
@@ -24,7 +27,8 @@ Whisper is a fixed-size database, similar in design to RRD.  It provides fast,
 reliable storage of numeric data over time.
 
 %prep
-%setup -q -n whisper
+%setup -q -n whisper-0.9.x
+%patch0 -p0
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")' build
@@ -44,6 +48,12 @@ CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")'
 /usr/bin/*
 
 %changelog
+* Tue Mar 25 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-1
+- Port a6e2176eb624f0c09df399b4f8464a5a08789bd6 to 0.9.x to make new graphite-web compatible with this package.
+
+* Tue Mar 25 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-1
+- New upstream version.
+
 * Fri Jun 1 2012 Ben P <ben@g.megatron.org> - 0.9.10-1
 - New upstream version.
 

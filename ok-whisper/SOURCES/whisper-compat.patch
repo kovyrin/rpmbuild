@@ -1,0 +1,28 @@
+--- whisper.py	2013-08-21 16:56:28.000000000 +0000
++++ whisper.py.patched	2014-03-25 02:08:22.509016949 +0000
+@@ -695,7 +695,7 @@
+   return info
+ 
+ 
+-def fetch(path,fromTime,untilTime=None):
++def fetch(path,fromTime,untilTime=None,now=None):
+   """fetch(path,fromTime,untilTime=None)
+ 
+ path is a string
+@@ -708,12 +708,13 @@
+ Returns None if no data can be returned
+ """
+   fh = open(path,'rb')
+-  return file_fetch(fh, fromTime, untilTime)
++  return file_fetch(fh, fromTime, untilTime, now)
+ 
+ 
+-def file_fetch(fh, fromTime, untilTime):
++def file_fetch(fh, fromTime, untilTime, now = None):
+   header = __readHeader(fh)
+-  now = int( time.time() )
++  if now is None:
++    now = int( time.time() )
+   if untilTime is None:
+     untilTime = now
+   fromTime = int(fromTime)
