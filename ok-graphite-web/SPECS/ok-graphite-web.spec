@@ -5,8 +5,8 @@
 
 #---------------------------------------------------------------------------------------------------
 %define graphite_version 0.9.12
-%define ok_version 02
-%define graphite_revision 06193935274e68e3a537f479296ee6cc7e7b892f
+%define ok_version 05
+%define graphite_revision fd0de43f5dee000ad6d99d0e6df7c1d95c4a43cf
 
 Name:           ok-graphite-web
 Version:        %{graphite_version}
@@ -24,9 +24,10 @@ Patch0:         navbar-west.patch
 BuildArch:      noarch
 
 BuildRequires:  python python-devel python-setuptools
-Requires:       Django django-tagging httpd mod_wsgi pycairo python-simplejson
-%{?el5:Requires: python-sqlite2}
-%{?el6:Requires: bitmap-fonts-compat}
+Requires:       Django14 django-tagging httpd mod_wsgi pycairo python-simplejson bitmap-fonts-compat
+
+Requires:       ok-whisper >= 0.9.12-02+1d99a3be4f5b147c0a96419911743e3fb4696bfa
+Requires:       ok-carbon >= 0.9.12-01+40bb7f27848ccc222c6a8a8ea2e0a0342414f9d6
 
 %description
 Graphite consists of a storage backend and a web-based visualization frontend.
@@ -41,12 +42,8 @@ applications), real-time visualization, high-availability, and enterprise
 scalability.
 
 %prep
-%setup -q -n graphite-web
+%setup -q -n graphite-web-0.9.x
 %patch0 -p2
-#%patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-#%patch4 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")' build
@@ -97,6 +94,15 @@ PYTHONPATH=$PYTHONPATH:/opt/graphite/webapp %{__python} /opt/graphite/webapp/gra
 %attr(775,graphite,apache) %dir /opt/graphite/storage/log/webapp
 
 %changelog
+* Mon Mar 24 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-05
+- Add dependencies on new carbon and whisper.
+
+* Mon Mar 24 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-04
+- Apply a patch to make graphite-web compatible with the latest carbon 0.9.12.
+
+* Mon Mar 24 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-03
+- Upgrade to the latest 0.9.x branch version.
+
 * Mon Aug 26 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-02
 - Move navbar to west by default.
 
