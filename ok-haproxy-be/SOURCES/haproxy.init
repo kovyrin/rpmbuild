@@ -12,6 +12,9 @@
 # This is our service name
 BASENAME=haproxy-be
 
+# Our pid file
+PIDFILE=/var/run/$BASENAME.pid
+
 [ -f /opt/haproxy-be/conf/haproxy-be.cfg ] || exit 1
 
 RETVAL=0
@@ -24,7 +27,7 @@ start() {
   fi
 
   echo -n "Starting $BASENAME: "
-  /opt/haproxy-be/bin/haproxy-be -D -f /opt/haproxy-be/conf/haproxy-be.cfg -p /var/run/$BASENAME.pid
+  /opt/haproxy-be/bin/haproxy-be -D -f /opt/haproxy-be/conf/haproxy-be.cfg -p $PIDFILE
   RETVAL=$?
   echo
   return $RETVAL
@@ -32,7 +35,7 @@ start() {
 
 stop() {
   echo -n "Shutting down $BASENAME: "
-  PID=`cat /var/run/$BASENAME.pid`
+  PID=`cat $PIDFILE`
   if [ "$PID" == "" ]; then
     echo "Not running!"
     return 1
@@ -40,7 +43,21 @@ stop() {
   kill -USR1 $PID
   RETVAL=$?
   echo
-  [ $RETVAL -eq 0 ] && rm -f /var/run/$BASENAME.pid
+  [ $RETVAL -eq 0 ] && rm -f $PIDFILE
+  return $RETVAL
+}
+
+reload() {
+  /opt/haproxy-be/bin/haproxy-be -c -q -f /opt/haproxy-be/conf/haproxy-be.cfg
+  if [ $? -ne 0 ]; then
+    echo "Errors found in configuration file, check it with '$BASENAME check'."
+    return 1
+  fi
+
+  echo -n "Reloading $BASENAME: "
+  /opt/haproxy-be/bin/haproxy-be -f /opt/haproxy-be/conf/haproxy-be.cfg -p $PIDFILE -sf $(<$PIDFILE)
+  RETVAL=$?
+  echo
   return $RETVAL
 }
 
@@ -52,7 +69,7 @@ restart() {
   fi
 
   echo -n "Restarting $BASENAME: "
-  /opt/haproxy-be/bin/haproxy-be -f /opt/haproxy-be/conf/haproxy-be.cfg -p /var/run/$BASENAME.pid -sf $(</var/run/$BASENAME.pid)
+  /opt/haproxy-be/bin/haproxy-be -f /opt/haproxy-be/conf/haproxy-be.cfg -p $PIDFILE -st $(<$PIDFILE)
   RETVAL=$?
   echo
   return $RETVAL
@@ -62,29 +79,45 @@ check() {
   /opt/haproxy-be/bin/haproxy-be -c -q -V -f /opt/haproxy-be/conf/haproxy-be.cfg
 }
 
+rh_status() {
+    status -p $PIDFILE $BASENAME
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+
 # See how we were called.
 case "$1" in
   start)
+    rh_status_q && exit 0
     start
     ;;
   stop)
+    rh_status_q || exit 0
     stop
     ;;
   restart)
     restart
     ;;
+  force-restart)
+    stop
+    start
+    ;;
   reload)
-    restart
+    reload
     ;;
   check)
     check
     ;;
   status)
-    status haproxy
+    rh_status
+    RETVAL=$?
     ;;
   *)
-    echo $"Usage: $BASENAME {start|stop|restart|reload|condrestart|status|check}"
+    echo $"Usage: $BASENAME {start|stop|restart|reload|force-restart|status|check}"
     RETVAL=1
 esac
- 
+
 exit $RETVAL
