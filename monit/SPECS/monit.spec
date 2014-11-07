@@ -31,7 +31,7 @@ install -m 755 bin/monit $RPM_BUILD_ROOT%{_bindir}/monit
 cp man/man1/monit.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/init.d/monit
-cp conf/monitrc $RPM_BUILD_ROOT%{_sysconfdir}/
+install -m 700 conf/monitrc $RPM_BUILD_ROOT%{_sysconfdir}/monitrc
 
 %files
 %defattr(-,root,root)
