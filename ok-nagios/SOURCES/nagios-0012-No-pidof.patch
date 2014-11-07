@@ -1,0 +1,10 @@
+--- daemon-init.in	2014-07-20 20:02:30.079737205 +0000
++++ daemon-init-no-pidof.in	2014-07-20 20:03:18.851849889 +0000
+@@ -138,7 +138,6 @@
+ 			chown $NagiosUser:$NagiosGroup $NagiosRunFile
+ 			[ -x /sbin/restorecon ] && /sbin/restorecon $NagiosRunFile
+ 			$NagiosBin -d $NagiosCfgFile
+-                        pidof nagios > $NagiosRunFile
+ 			if [ -d $NagiosLockDir ]; then touch $NagiosLockDir/$NagiosLockFile; fi
+ 			echo " done."
+ 			exit 0

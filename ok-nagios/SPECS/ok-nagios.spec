@@ -1,5 +1,5 @@
 %define nagios_version 3.4.4
-%define package_revision 02
+%define package_revision 03
 
 Name: ok-nagios
 Version: %{nagios_version}
@@ -30,6 +30,8 @@ Patch8: nagios-0008-Fix-path-to-CGI-executables.patch
 Patch9: nagios-0009-Fixed-path-to-passwd-file-in-Apache-s-config-file.patch
 Patch10: nagios-0010-Added-several-images-to-the-sample-config-revb.patch
 Patch11: nagios-0011-Fixed-strange-permissions.patch
+# Remove pidof and let nagios save its pid in lockfile
+Patch12: nagios-0012-No-pidof.patch
 
 BuildRequires: gd-devel > 1.8, mailx, libjpeg-devel, libpng-devel
 
@@ -114,6 +116,7 @@ may compile against.
 %patch9 -p1 -b .fix_path_to_passwd
 %patch10 -p1 -b .more_images
 %patch11 -p1 -b .fix_perms
+%patch12 -p0 -b .no_pidof
 
 install -p -m 0644 %{SOURCE10} %{SOURCE11} %{SOURCE12} html/images/logos/
 

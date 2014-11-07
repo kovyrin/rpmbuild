@@ -1,0 +1,41 @@
+diff -uNr nagios-plugins-1.4.16/plugins/check_procs.c nagios-plugins-1.4.16-patched/plugins/check_procs.c
+--- nagios-plugins-1.4.16/plugins/check_procs.c	2014-07-24 07:45:55.000000000 +0000
++++ nagios-plugins-1.4.16-patched/plugins/check_procs.c	2014-07-24 11:56:55.890488126 +0000
+@@ -204,6 +204,9 @@
+ 			/* Ignore self */
+ 			if (mypid == procpid) continue;
+ 
++			/* Ignore child containers if we're on an lxc/docker node */
++			if (read_lxc_id(procpid) != 0) continue;
++
+ 			if ((options & STAT) && (strstr (statopts, procstat)))
+ 				resultsum |= STAT;
+ 			if ((options & ARGS) && procargs && (strstr (procargs, args) != NULL))
+@@ -675,6 +678,27 @@
+ 	return total;
+ }
+ 
++/* Returns 1 if  the specified process is inside container, or 0 if we're not on container */
++int
++read_lxc_id(int procid) {
++	FILE *file;
++	char *filename = strdup("");
++	char line[256];
++	int result = 0;
++
++	asprintf(&filename, "/proc/%d/cgroup", procid);
++
++	if ((file = fopen(filename, "r")) == NULL) return 0;
++
++	while (fgets(line, sizeof(line), file) != NULL) {
++		if (strstr(line, "lxc") != NULL) {
++			result = 1;
++		}
++	}
++
++	fclose(file);
++	return result;
++}
+ 
+ void
+ print_help (void)
