@@ -38,7 +38,9 @@ install -m 700 conf/monitrc $RPM_BUILD_ROOT%{_sysconfdir}/monitrc
 %{_sysconfdir}/init.d/monit
 %{_bindir}/monit
 %{_mandir}/man1/monit.1.gz
-%{_sysconfdir}/monitrc
+
+%config %{_sysconfdir}/monitrc
+%dir %{_sysconfdir}/monit.d
 
 %post
 chkconfig --add monit
