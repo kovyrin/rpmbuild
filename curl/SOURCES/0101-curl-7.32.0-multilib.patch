@@ -1,0 +1,71 @@
+diff -up a/curl-config.in b/curl-config.in
+--- a/curl-config.in
++++ b/curl-config.in
+@@ -75,7 +75,7 @@ while test $# -gt 0; do
+         ;;
+ 
+     --cc)
+-        echo "@CC@"
++        echo "gcc"
+         ;;
+ 
+     --prefix)
+@@ -142,29 +142,16 @@ while test $# -gt 0; do
+         ;;
+ 
+     --libs)
+-        if test "X@libdir@" != "X/usr/lib" -a "X@libdir@" != "X/usr/lib64"; then
+-           CURLLIBDIR="-L@libdir@ "
+-        else
+-           CURLLIBDIR=""
+-        fi
+-        if test "X@REQUIRE_LIB_DEPS@" = "Xyes"; then
+-          echo ${CURLLIBDIR}-lcurl @LIBCURL_LIBS@
+-        else
+-          echo ${CURLLIBDIR}-lcurl
+-        fi
++        pkg-config libcurl --libs
+         ;;
+ 
+     --static-libs)
+-        if test "X@ENABLE_STATIC@" != "Xno" ; then
+-          echo @libdir@/libcurl.@libext@ @LDFLAGS@ @LIBCURL_LIBS@
+-        else
+-          echo "curl was built with static libraries disabled" >&2
+-          exit 1
+-        fi
++        echo "curl was built with static libraries disabled" >&2
++        exit 1
+         ;;
+ 
+     --configure)
+-        echo @CONFIGURE_OPTIONS@
++        pkg-config libcurl --variable=configure_options | sed 's/^"//;s/"$//'
+         ;;
+ 
+     *)
+diff -up a/docs/curl-config.1 b/docs/curl-config.1
+--- a/docs/curl-config.1
++++ b/docs/curl-config.1
+@@ -65,7 +65,9 @@ be listed using uppercase and are separa
+ one, or several protocols in the list. (Added in 7.13.0)
+ .IP "--static-libs"
+ Shows the complete set of libs and other linker options you will need in order
+-to link your application with libcurl statically. (Added in 7.17.1)
++to link your application with libcurl statically. Note that Fedora/RHEL libcurl
++packages do not provide any static libraries, thus cannot be linked statically.
++(Added in 7.17.1)
+ .IP "--version"
+ Outputs version information about the installed libcurl.
+ .IP "--vernum"
+diff -up a/libcurl.pc.in b/libcurl.pc.in
+--- a/libcurl.pc.in
++++ b/libcurl.pc.in
+@@ -29,6 +29,7 @@ libdir=@libdir@
+ includedir=@includedir@
+ supported_protocols="@SUPPORT_PROTOCOLS@"
+ supported_features="@SUPPORT_FEATURES@"
++configure_options=@CONFIGURE_OPTIONS@
+ 
+ Name: libcurl
+ URL: http://curl.haxx.se/

@@ -1,0 +1,35 @@
+--- a/lib/multi.c
++++ b/lib/multi.c
+@@ -1024,9 +1024,16 @@ static CURLMcode multi_runsingle(struct
+         if(CURLE_OK != data->result)
+           disconnect_conn = TRUE;
+         else {
+-          if(async)
++          if(async) {
+             /* We're now waiting for an asynchronous name lookup */
+             multistate(data, CURLM_STATE_WAITRESOLVE);
++#ifdef USE_THREADS_POSIX
++            /* Curl_resolv_getsock() is not properly implemented in case
++             * we use POSIX threaded DNS resolver, we have to hang */
++            result = CURLM_CALL_MULTI_PERFORM;
++            break;
++#endif
++          }
+           else {
+             /* after the connect has been sent off, go WAITCONNECT unless the
+                protocol connect is already done and we can go directly to
+@@ -1097,6 +1104,14 @@ static CURLMcode multi_runsingle(struct
+         disconnect_conn = TRUE;
+         break;
+       }
++#ifdef USE_THREADS_POSIX
++      /* Curl_resolv_getsock() is not properly implemented yet in case
++       * we use POSIX threaded DNS resolver, we have to hang */
++      Curl_socket_ready(CURL_SOCKET_BAD, CURL_SOCKET_BAD, 100 /* ms */);
++      result = CURLM_CALL_MULTI_PERFORM;
++      break;
++#endif
++
+     }
+     break;
+ 

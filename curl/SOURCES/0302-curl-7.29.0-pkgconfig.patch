@@ -1,0 +1,17 @@
+This patch cleans up libcurl.pc to remove redundant compiler/linker
+flags that refer to standard directories, i.e.
+
+-L/usr/lib(64)?
+-I/usr/include
+
+--- libcurl.pc.in
++++ libcurl.pc.in
+@@ -35,6 +35,6 @@ Name: libcurl
+ URL: http://curl.haxx.se/
+ Description: Library to transfer files with ftp, http, etc.
+ Version: @CURLVERSION@
+-Libs: -L${libdir} -lcurl
++Libs: -lcurl
+ Libs.private: @LIBCURL_LIBS@
+-Cflags: -I${includedir} @CPPFLAG_CURL_STATICLIB@
++Cflags: @CPPFLAG_CURL_STATICLIB@
