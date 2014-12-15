@@ -1,0 +1,127 @@
+########################
+Nagios Core 4 Change Log
+########################
+
+4.0.8 - 08/12/2014
+------------------
+ENHANCEMENTS
+* Removed 8 kB string size limitation in JSON CGIs (Eric Stanley)
+* Re-implemented auto-rescheduling of checks (Eric Mislivec)
+* Avoid bunching of checks delayed due to timeperiod constraints (Eric Stanley)
+* Limit the number of autocalculated core workers to not spawn too many on large systems (Eric Mislivec, Janice Singh)
+
+FIXES
+* Removed quotes from numeric duration values in JSON CGIs (Eric Stanley)
+* Fixed escaping in JSON CGIs so all required characters are escaped, and in the correct order (Eric Stanley)
+* Fixed segfault in archive JSON CGI when plugin output was empty (Eric Stanley)
+* Fixed several possibilities for buffer overflow (Eric Mislivec, Dirkjan Bussink)
+* Fixed Tracker #582, #626: Handle VAR=VAL assignments at the start of simple commands (Eric Mislivec, Phil Randal)
+* Fixed Tracker #630: Recognize '<' and '>' as redirection operators (Eric Mislivec)
+* Corrected worker communication protocol documentation (Phil Mayers)
+* Fixed init script to leave config test log in a better location, let sysconfig override init script variables, and not remove nagios.cmd when attempting to start with another instance running (Eric Mislivec, Robin Kearney)
+* Fixed Tracker #361: Downtime notifications not displayed properly (Andrew Widdersheim)
+
+4.0.7 - 06/03/2014
+------------------
+ENHANCEMENTS
+* Added value of custom variables to Object JSON output for hosts, services and contacts (Eric Stanley)
+
+FIXES
+* Fixed bug #616: Unescape plugin output read from checkresult files, fix multiline perf data concatenation, and avoid extra memory allocation and copies. (Eric Mislivec)
+* Fixed bug #609: Image on home page doesn't have correct image path prefix. (Derek Brewer)
+* Fixed bug #608: Extra newline in service check timeout output string. (Mauno Pihelgas)
+* Fixed bug #596: Crashes checking contact authorization for host escalations. (Alexey Dvoryanchikov - duplicates #590, #586)
+* Fixed bug #496: Syntax error in exfoliation's common.css. (Karsten Weiss)
+
+4.0.6 - 04/29/2014
+------------------
+ENHANCEMENTS
+* Added name of authenticated user to JSON CGI results object (Eric Stanley)
+* Added Nagios Core version to the Status JSON CGI programstatus query (Eric Stanley)
+* Added daemon status to main page (Eric Mislivec)
+
+FIXES
+* Fixed bug #600: Service Check Timeout State always returns OK (0) status (Mauno Pihelgas, Eric Stanley)
+* Fixed bug #583: Status Check Output of (No output on stdout) stderr: (Eric
+Stanley - duplicate of bug #573)
+* Fixed bug #573: Service checks returns (No output on stdout) stderr (Eric Stanley)
+* Fixed bug #438: Reloads during downtime causes wrong availability calculations (Eric Stanley)
+* Fixed feed updates when daemon can not access external networks (Eric Mislivec)
+* Archive JSON: Fixed bugs calculating availability (Eric Stanley)
+* Archive JSON: Allow missing logs to be skipped (Eric Stanley)
+
+4.0.5 - 04/11/2014
+------------------
+* Fixed bug #595: Nagios 4 security fix (Alexey Dvoryanchikov, Eric Stanley)
+* Fixed bug #594: Nagios 4 fix contactgroups parsing (Alexey Dvoryanchikov, Eric Stanley)
+* Fixed bug #577: Nagios 4 checks stalled when write to socket failed (Alexey Dvoryanchikov)
+* Fixed bug #580: Nagios 4 memory leak (Eric Stanley)
+* Fixed init script to remove the switching of users when performing configuration verification which was causing failures if nagios user was set to nologin (Scott Wilkerson)
+* Fixed auto creation of RAMDISK via environment variables in init script to properly check existence using $RAMDISK_DIR environment variable. (Scott Wilkerson)
+* Fixed unreferenced variable NagiosVarDir in daemon-init (Eric Mislivec)
+* Fixed bug where audio alerts wouldn't work with a 0 height and width - http://support.nagios.com/forum/viewtopic.php?t=26387 (Scott Wilkerson)
+
+4.0.4 - 03/14/2014
+------------------
+ENHANCEMENTS
+* JSON CGIs moved to beta status (Eric Stanley)
+
+FIXES
+* Fixed bug #491,#553: Rebuilt the daemon-init scripts back to something that should work on all systems (Scott Wilkerson)
+
+
+4.0.3 - 02/28/2014
+------------------
+ENHANCEMENTS
+* Aliased hourly_value to importance and minimum_value to minimum_importance and deprecated the former (Eric Stanley)
+* Added host and service importance macros (Eric Stanley)
+* Added notifications on flexible downtime expiration (Dan Wittenberg)
+
+FIXES
+* Bug #548: Temporary fix that rejects all external command during restart to prevent Core from crashing (Eric Stanley)
+* Corrected calculation of host importance and importance defaults (Eric Stanley)
+* Fixed bug #498: Nagios 4 enable_environment_macros=1 not working (Eric Stanley, Alexey Dvoryanchikov)
+* No longer checks whether logs can be written when verifying configuration (Eric Stanley)
+* Fixed CGI bug where the CGI could read past the end of the list of CGI variables, potentially crashing the CGI (Scott Wilkerson)
+* Fixed inheritance of hourly_value from host and service templates (Scott Wilkerson)
+* Fixed bug #502: 4.0.0: Configuration -> Service Escalations = incomplete list (Eric Stanley)
+* Fixed bug #523: quotes and double quotes in plugin message are converted to HTML escapes in Nagios 4.0 (duplicate of bug #524)
+* Fixed bug #524: URLs returned in plugin check results are not correctly displayed (Eric Stanley)
+* Fixed bug where passive service checks would return "Service check timed out after 0.00 seconds" (Scott Wilkerson)
+
+4.0.2 - 11/25/2013
+------------------
+FIXES
+* Fixed bug 528: Nagios 4.0.1: Logrotation: Only current host- and servicestates saved in rotated logfiles (duplicate of 507)
+* Fixed bug 507: Nagios 4.0.0 - Problem during log rotate (Stefano Ghelfi)
+* Fixed bug 530: RPM spec file sets wrong permissions on plugins directory (duplicate of bug 494)
+* Fixed bug 494: nagios.spec fixes (with patch) (Karsten Weiss)
+* Fixed bug 515: Segsegv after starting up nagios (duplicate of bug 526)
+* Fixed bug 513: Crash while entering downtime for service (duplicate of bug 526)
+* Fixed bug 529: Core Worker failed to reap child in 4.0.1 Description
+* Fixed bug 514: scheduled downtime not showing in web interface (Eric Stanley)
+* Fixed bug 526: sort_downtime() corrupts scheduled_downtime_list causing segfault (Adam James)
+* Fixed bug 492: Nagios 4 fails to remove/add checks upon reload (Eric Stanley)
+* Fixed Bug 484: Beta4.0.0b4 service checks returning (No output on stdout) (Eric Stanley)
+* Fixed Bug 470: statusmap doesn't display info (Cameron Moore)
+* Fixed Bug 499: Security issue in daemon-init.in, function check_config (Tómas Edwardsson)
+
+4.0.1 - 10/15/2013
+------------------
+ENHANCEMENTS
+* Added compiler flags in RPM spec file to reduce compiler noise (Dan Wittenberg)
+* Added logging of failure in dlclose() call (Anton Lofgren)
+* Added a simple query handler interface, nagios-qh.rb (Dan Wittenberg)
+* Multiple code simplifications, additional error handling in downtime code (Andreas Ericsson)
+
+FIXES
+* Reverted commit f99a9a7b which set check_interval to 1 if it was configured as zero.
+* Corrected order of arguments when logging unknown hosts/services (Scott Wilkerson)
+* Downtime initialized before retention data read (Eric Stanley)
+* Patches to make RPM build again (Dan Wittenberg)
+* Ensure that scheduled_downtime_depth never drops below zero (Andreas Ericsson)
+
+4.0.0 - 09/20/2013
+------------------
+See http://nagios.sourceforge.net/docs/nagioscore/4/en/whatsnew.html for a
+list of the changes in Nagios Core 4
