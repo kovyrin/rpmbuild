@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %define google_auth_version github
 %define package_revision 01
 
@@ -8,7 +9,7 @@ Summary:        One-time passcode support using open standards
 Group:          Security
 License:        ASL 2.0
 URL:            http://code.google.com/p/google-authenticator/
-Source0:        libpam-google-authenticator-%{version}-source.tar.bz2
+Source0:        google-authenticator.tar
 
 Requires:       pam
 Requires:       qrencode
@@ -33,15 +34,19 @@ algorithm specified in RFC 4226 and the Time-based One-time Password
 (TOTP) algorithm currently in draft.
 
 %prep
-%setup -q -n libpam-google-authenticator-github
+%setup -q -n google-authenticator/libpam
 
 %build
+./bootstrap.sh
+./configure
 make CFLAGS="${CFLAGS:-%optflags}" LDFLAGS=-ldl %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
-install -m0755 pam_google_authenticator.so $RPM_BUILD_ROOT/%{_lib}/security/pam_google_authenticator.so
+echo $PWD
+echo WUUT
+install -m0755 google-authenticator.o $RPM_BUILD_ROOT/%{_lib}/security/pam_google_authenticator.so
 
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 install -m0755 google-authenticator $RPM_BUILD_ROOT/%{_bindir}/google-authenticator
