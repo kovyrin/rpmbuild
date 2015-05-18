@@ -41,6 +41,23 @@ task :build => [ :clean, :prepare ] do
   end
 end
 
+desc "Copy RPM files to YUM repo"
+task :release => :build do
+  yum_repo_dir = "#{repo_top_dir}/../repo/#{rpm_name}"
+
+  puts "Creating target directory..."
+  sh "mkdir -p #{yum_repo_dir}"
+
+  puts "Copying rpm files..."
+  sh "cp #{top_dir}/RPMS/**/*.rpm #{yum_repo_dir}/"
+
+  puts "Copying src.rpm file..."
+  sh "cp #{top_dir}/SRPMS/*.rpm #{yum_repo_dir}/"
+
+  puts "Building repo indexes..."
+  sh "cd #{yum_repo_dir} && rake"
+end
+
 #---------------------------------------------------------------------------------------------------
 namespace :rpm do
   build_flags = {
