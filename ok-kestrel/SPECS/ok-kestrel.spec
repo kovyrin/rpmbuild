@@ -8,12 +8,15 @@
 #---------------------------------------------------------------------------------------------------
 %define base_install_dir /opt/kestrel
 
-%define kestrel_version 2.4.1
+%define package_version 2.4.4
+%define swiftype_revision 03
+%define kestrel_version %{package_version}-SWIFTYPE%{swiftype_revision}
+
 %define scala_version 2.9.2
-%define package_revision 01
+%define package_revision 04
 
 Name:           ok-kestrel
-Version:        %{kestrel_version}
+Version:        %{package_version}
 Release:        %{package_revision}
 Summary:        Kestrel is a simple, distributed message queue written on the JVM
 
@@ -21,7 +24,7 @@ Group:          Development
 Vendor:         Twitter
 License:        Apache License, Version 2.0
 URL:            http://twitter.github.io/kestrel
-Source0:        http://twitter.github.io/kestrel/download/kestrel-%{version}.zip
+Source0:        http://twitter.github.io/kestrel/download/kestrel-%{kestrel_version}.zip
 
 BuildArch:      noarch
 
@@ -33,7 +36,7 @@ Each server handles a set of reliable, ordered message queues, with no cross com
 resulting in a cluster of k-ordered ("loosely ordered") queues. Kestrel is fast, small, and reliable.
 
 %prep
-%setup -q -n kestrel-%{version}
+%setup -q -n kestrel-%{kestrel_version}
 
 %build
 true
@@ -44,7 +47,7 @@ rm -rf %{buildroot}
 %{__mkdir} -p %{buildroot}%{base_install_dir}
 
 # Kestrel files
-cp -ax kestrel_%{scala_version}-%{version}.jar %{buildroot}%{base_install_dir}/kestrel-%{version}.jar
+cp -ax kestrel_%{scala_version}-%{kestrel_version}.jar %{buildroot}%{base_install_dir}/kestrel-%{package_version}.jar
 cp -ax libs %{buildroot}%{base_install_dir}/
 cp -ax scripts %{buildroot}%{base_install_dir}/
 
@@ -78,5 +81,14 @@ rm -rf %{buildroot}
 %dir /var/lock/subsys/kestrel
 
 %changelog
+* Mon May 18 2015 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.4.4-SWIFTYPE03
+- PR #1: Reading a queue that already exists does not need a mutex
+
+* Mon May 4 2015 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.4.4-SWIFTYPE02
+- Remove queue-specific metrics (with histograms) because they tend to consume too much of RAM on brokers with many queues.
+
+* Thu Apr 23 2015 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.4.4-SWIFTYPE01
+- Backport Twitter's changes since the last public release (based on their maven repo).
+
 * Fri Mar 28 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.4.1-01
 - Initial package release for 2.4.1
