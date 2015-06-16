@@ -1,51 +1,45 @@
 %define ctop_release    4
+# do not build debug packages
+%define debug_package %{nil}
 
 Name:       ctop
-Version:    1
 Release:    %{ctop_release}%{?dist}
+Version:    1
 License:    The MIT License
 URL:        https://github.com/hailocab/ctop
-Source0:    https://github.com/hailocab/ctop/archive/1.4.tar.gz
+Source0:    https://github.com/hailocab/ctop/archive/ctop.tar.gz
 Summary:    CTOP ("Top for Cassandra")
 Group:      System administration tools
 
-Provides: ctop = 1.4
+Provides: ctop = %version.%{ctop_release}
 
 Obsoletes: ctop
 
 BuildRequires: golang
-BuildRequires: ok-mx4j
-
-Requires: ok-mx4j
 
 %description
 CTOP is a tool which allows you to quickly find out what's happening on a machine running Cassandra. It is particularly useful on a cluster with multiple-tenants, multiple-applications, and large numbers of tables. If you suspect that the performance is not good, then you can use this to figure out which table is giving you trouble.
 
 %prep
-%setup -n ctop
-#autoconf
+%setup
 
 %build
-GOPATH=`pwd` GOBIN=`pwd`/bin go build
+export GOPATH=`pwd`
+export GOBIN=`pwd`/bin
+go get
+go build
 
 %install
+mkdir -p $RPM_BUILD_ROOT/usr/bin
+cp ctop-%{version} $RPM_BUILD_ROOT/usr/bin/ctop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-, root, root)
-ctop
-%{_includedir}
-%{_datadir}
-%{_libdir}
+%attr(755, root, root) /usr/bin/ctop
+/usr/bin/ctop
 
 %changelog
-* Fri Nov 22 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.0.0-p353-1
-- Updated ruby to 2.0.0-p353. First 2.0 build.
-
-* Sat Apr 27 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.9.3-p385-1
-- Updated ruby and the patches to 1.9.3-p385.
-
-* Fri Feb 8 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.9.3-p327-1
-- Initial release for Ruby 1.9.3-p327 with falcon-gc patch.
+* Mon Mar 23 2015 Vadzim Tonka <vtonko@swiftype.com> - 1.4
+- Initial release.

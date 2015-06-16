@@ -8,13 +8,12 @@
 %define __service  /sbin/service
 
 #---------------------------------------------------------------------------------------------------
-%define carbon_version 0.9.12
+%define carbon_version 0.9.13
 %define ok_version 01
-%define carbon_revision 40bb7f27848ccc222c6a8a8ea2e0a0342414f9d6
 
 Name:           ok-carbon
 Version:        %{carbon_version}
-Release:        %{ok_version}+%{carbon_revision}
+Release:        %{ok_version}
 Summary:        Backend data caching and persistence daemon for Graphite
 Group:          Applications/Internet
 License:        Apache Software License 2.0
@@ -22,7 +21,7 @@ URL:            https://launchpad.net/graphite
 Vendor:         Chris Davis <chrismd@gmail.com>
 Packager:       Dan Carley <dan.carley@gmail.com>
 
-Source0:        carbon-0.9.x-%{carbon_revision}.tar.gz
+Source0:        carbon-%{carbon_version}.tar.gz
 Source1:        carbon-cache.init
 Source2:        carbon-cache.sysconfig
 Source3:        carbon-relay.init
@@ -40,7 +39,7 @@ Requires:       python-twisted-core >= 8.2
 The backend for Graphite. Carbon is a data collection and storage agent.
 
 %prep
-%setup -q -n carbon-0.9.x
+%setup -q -n carbon-%{carbon_version}
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" %{__python} -c 'import setuptools; execfile("setup.py")' build
@@ -86,7 +85,7 @@ exit 0
 
 %files
 %defattr(-,root,root,-)
-%doc LICENSE README.md conf/*
+%doc LICENSE conf/*
 
 /opt/graphite/bin
 /opt/graphite/lib
@@ -106,6 +105,9 @@ exit 0
 %ghost %{_localstatedir}/lock/subsys/carbon-aggregator
 
 %changelog
+*  Tue Jun 16 2015 Vadzim Tonka <vadim@swiftype.net> - 0.9.13-01
+- New carbon version
+
 * Tue Mar 25 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-1
 - New upstream version.
 

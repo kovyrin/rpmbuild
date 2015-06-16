@@ -4,13 +4,12 @@
 %define __service  /sbin/service
 
 #---------------------------------------------------------------------------------------------------
-%define graphite_version 0.9.12
-%define ok_version 05
-%define graphite_revision fd0de43f5dee000ad6d99d0e6df7c1d95c4a43cf
+%define graphite_version 0.9.13
+%define ok_version 01
 
 Name:           ok-graphite-web
 Version:        %{graphite_version}
-Release:        %{ok_version}+%{graphite_revision}
+Release:        %{ok_version}
 Summary:        Enterprise scalable realtime graphing
 Group:          Applications/Internet
 License:        Apache License
@@ -18,7 +17,7 @@ URL:            https://launchpad.net/graphite
 Vendor:         Chris Davis <chrismd@gmail.com>
 Packager:       Dan Carley <dan.carley@gmail.com>
 
-Source0:        graphite-web-%{graphite_version}-%{graphite_revision}.tar.gz
+Source0:        graphite-web-%{graphite_version}.tar.gz
 Patch0:         navbar-west.patch
 
 BuildArch:      noarch
@@ -26,8 +25,8 @@ BuildArch:      noarch
 BuildRequires:  python python-devel python-setuptools
 Requires:       Django14 django-tagging httpd mod_wsgi pycairo python-simplejson bitmap-fonts-compat
 
-Requires:       ok-whisper >= 0.9.12-02+1d99a3be4f5b147c0a96419911743e3fb4696bfa
-Requires:       ok-carbon >= 0.9.12-01+40bb7f27848ccc222c6a8a8ea2e0a0342414f9d6
+Requires:       ok-whisper >= 0.9.13-01
+Requires:       ok-carbon >= 0.9.13-01
 
 %description
 Graphite consists of a storage backend and a web-based visualization frontend.
@@ -42,7 +41,7 @@ applications), real-time visualization, high-availability, and enterprise
 scalability.
 
 %prep
-%setup -q -n graphite-web-0.9.x
+%setup -q -n graphite-web-%{graphite_version}
 %patch0 -p2
 
 %build
@@ -74,7 +73,7 @@ exit 0
 
 %post
 # Initialize the database
-PYTHONPATH=$PYTHONPATH:/opt/graphite/webapp %{__python} /opt/graphite/webapp/graphite/manage.py syncdb --noinput >/dev/null
+DJANGO_SETTINGS_MODULE=local_settings.py django-admin syncdb --pythonpath=/opt/graphite/webapp --settings=graphite.settings --noinput >/dev/null
 %{__chown} graphite:apache /opt/graphite/storage/graphite.db
 %{__chmod} 0664 /opt/graphite/storage/graphite.db
 
@@ -94,6 +93,9 @@ PYTHONPATH=$PYTHONPATH:/opt/graphite/webapp %{__python} /opt/graphite/webapp/gra
 %attr(775,graphite,apache) %dir /opt/graphite/storage/log/webapp
 
 %changelog
+* Tue Jun 16 2015 Vadzim Tonka <vadim@swiftype.net> - 0.9.13-01
+- New graphite-web version
+
 * Mon Mar 24 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 0.9.12-05
 - Add dependencies on new carbon and whisper.
 
