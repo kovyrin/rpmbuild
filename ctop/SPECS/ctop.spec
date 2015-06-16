@@ -24,8 +24,14 @@ CTOP is a tool which allows you to quickly find out what's happening on a machin
 %setup
 
 %build
+# set env vars
 export GOPATH=`pwd`
 export GOBIN=`pwd`/bin
+
+# patch port
+sed -i -e 's/var portNumber = "8081"/var portNumber = "17104"/' main.go
+
+# get dependencies and build
 go get
 go build
 
@@ -38,7 +44,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %attr(755, root, root) /usr/bin/ctop
-/usr/bin/ctop
 
 %changelog
 * Mon Mar 23 2015 Vadzim Tonka <vtonko@swiftype.com> - 1.4
