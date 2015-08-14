@@ -1,7 +1,7 @@
 %define openresty_home /opt/openresty
 
-%define openresty_version 1.2.7.8
-%define openresty_revision 05
+%define openresty_version 1.7.10.2
+%define openresty_revision 01
 
 #---------------------------------------------------------------------------------
 Name:           ok-openresty
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 /etc/sysconfig/nginx-openresty
 
 %changelog
+* Fri Jul 10 2015 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.7.10.2-01
+- New upstream release.
+
 * Mon May 20 2013 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.2.7.8-05
 - Do not touch configs in /opt/openresty/nginx/conf.
 
