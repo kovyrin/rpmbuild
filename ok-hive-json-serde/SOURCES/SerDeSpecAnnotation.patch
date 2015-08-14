@@ -1,0 +1,21 @@
+diff --git a/json-serde/src/main/java/org/openx/data/jsonserde/JsonSerDe.java b/json-serde/src/main/java/org/openx/data/jsonserde/JsonSerDe.java
+index be168b4..1864f3b 100644
+--- a/json-serde/src/main/java/org/openx/data/jsonserde/JsonSerDe.java
++++ b/json-serde/src/main/java/org/openx/data/jsonserde/JsonSerDe.java
+@@ -31,6 +31,8 @@ import org.apache.hadoop.io.Writable;
+ 
+ import org.apache.commons.logging.Log;
+ import org.apache.commons.logging.LogFactory;
++import org.apache.hadoop.hive.serde.serdeConstants;
++import org.apache.hadoop.hive.serde2.SerDeSpec;
+ import org.apache.hadoop.hive.serde2.SerDeStats;
+ import org.apache.hadoop.hive.serde2.objectinspector.ListObjectInspector;
+ import org.apache.hadoop.hive.serde2.objectinspector.MapObjectInspector;
+@@ -65,6 +67,7 @@ import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
+  * 
+  * @author rcongiu
+  */
++@SerDeSpec(schemaProps = {serdeConstants.LIST_COLUMNS, serdeConstants.LIST_COLUMN_TYPES})
+ public class JsonSerDe implements SerDe {
+ 
+     public static final Log LOG = LogFactory.getLog(JsonSerDe.class);
