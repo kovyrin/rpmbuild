@@ -1,0 +1,13 @@
+diff --git a/src/syscall/exec_linux_test.go b/src/syscall/exec_linux_test.go
+index 60d2734..b16540f 100644
+--- a/src/syscall/exec_linux_test.go
++++ b/src/syscall/exec_linux_test.go
+@@ -89,7 +89,7 @@ func kernelVersion(t *testing.T) (int, int) {
+ 	return major, minor
+ }
+ 
+-func TestCloneNEWUSERAndRemapNoRootDisableSetgroups(t *testing.T) {
++func testCloneNEWUSERAndRemapNoRootDisableSetgroups(t *testing.T) {
+ 	if os.Getuid() == 0 {
+ 		t.Skip("skipping unprivileged user only test")
+ 	}

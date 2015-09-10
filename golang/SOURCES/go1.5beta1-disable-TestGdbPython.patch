@@ -1,0 +1,13 @@
+diff --git a/src/runtime/runtime-gdb_test.go b/src/runtime/runtime-gdb_test.go
+index f4014b2..2c09441 100644
+--- a/src/runtime/runtime-gdb_test.go
++++ b/src/runtime/runtime-gdb_test.go
+@@ -38,7 +38,7 @@ func main() {
+ }
+ `
+ 
+-func TestGdbPython(t *testing.T) {
++func testGdbPython(t *testing.T) {
+ 	if runtime.GOOS == "darwin" {
+ 		t.Skip("gdb does not work on darwin")
+ 	}

@@ -1,0 +1,53 @@
+diff --git a/src/cmd/dist/buildtool.go b/src/cmd/dist/buildtool.go
+index be54ac4..6744fbdc 100644
+--- a/src/cmd/dist/buildtool.go
++++ b/src/cmd/dist/buildtool.go
+@@ -108,12 +108,20 @@ func bootstrapBuildTools() {
+ 	os.Setenv("GOBIN", "")
+ 
+ 	os.Setenv("GOOS", "")
+-	os.Setenv("GOHOSTOS", "")
+ 	os.Setenv("GOARCH", "")
++
++	hostos := os.Getenv("GOHOSTOS")
++	hostarch := os.Getenv("GOHOSTARCH")
++	os.Setenv("GOHOSTOS", "")
+ 	os.Setenv("GOHOSTARCH", "")
+ 
++	bingopath := pathf("%s/bin/%s_%s/go", goroot_bootstrap, hostos, hostarch)
++	if _, err := os.Stat(bingopath); os.IsNotExist(err) {
++		bingopath = pathf("%s/bin/go", goroot_bootstrap)
++	}
++
+ 	// Run Go 1.4 to build binaries.
+-	run(workspace, ShowOutput|CheckExit, pathf("%s/bin/go", goroot_bootstrap), "install", "-v", "bootstrap/...")
++	run(workspace, ShowOutput|CheckExit, bingopath, "install", "-v", "bootstrap/...")
+ 
+ 	// Copy binaries into tool binary directory.
+ 	for _, name := range bootstrapDirs {
+diff --git a/src/make.bash b/src/make.bash
+index f17648a..77f463c 100755
+--- a/src/make.bash
++++ b/src/make.bash
+@@ -113,12 +113,17 @@ echo '##### Building Go bootstrap tool.'
+ echo cmd/dist
+ export GOROOT="$(cd .. && pwd)"
+ GOROOT_BOOTSTRAP=${GOROOT_BOOTSTRAP:-$HOME/go1.4}
+-if [ ! -x "$GOROOT_BOOTSTRAP/bin/go" ]; then
+-	echo "ERROR: Cannot find $GOROOT_BOOTSTRAP/bin/go." >&2
++if [ -x "$GOROOT_BOOTSTRAP/bin/${GOHOSTOS}_${GOHOSTARCH}/go" ]; then
++	rm -f cmd/dist/dist
++	GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/${GOHOSTOS}_${GOHOSTARCH}/go" build -o cmd/dist/dist ./cmd/dist
++elif [ -x "$GOROOT_BOOTSTRAP/bin/go" ]; then
++	rm -f cmd/dist/dist
++	GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/go" build -o cmd/dist/dist ./cmd/dist
++else
++	echo "ERROR: Cannot find $GOROOT_BOOTSTRAP/bin/${GOHOSTOS}_${GOHOSTARCH}/go." >&2
++	echo "ERROR: or $GOROOT_BOOTSTRAP/bin/${GOHOSTOS}_${GOHOSTARCH}/go." >&2
+ 	echo "Set \$GOROOT_BOOTSTRAP to a working Go tree >= Go 1.4." >&2
+ fi
+-rm -f cmd/dist/dist
+-GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/go" build -o cmd/dist/dist ./cmd/dist
+ 
+ # -e doesn't propagate out of eval, so check success by hand.
+ eval $(./cmd/dist/dist env -p || echo FAIL=true)
