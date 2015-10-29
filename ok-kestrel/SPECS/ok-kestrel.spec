@@ -9,11 +9,11 @@
 %define base_install_dir /opt/kestrel
 
 %define package_version 2.4.4
-%define swiftype_revision 03
+%define swiftype_revision 04
 %define kestrel_version %{package_version}-SWIFTYPE%{swiftype_revision}
 
 %define scala_version 2.9.2
-%define package_revision 04
+%define package_revision 05
 
 Name:           ok-kestrel
 Version:        %{package_version}
@@ -81,6 +81,9 @@ rm -rf %{buildroot}
 %dir /var/lock/subsys/kestrel
 
 %changelog
+* Wed Jun 03 2015 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.4.4-SWIFTYPE04
+- PR #2: Prune hourly stats
+
 * Mon May 18 2015 Oleksiy Kovyrin <alexey@kovyrin.net> - 2.4.4-SWIFTYPE03
 - PR #1: Reading a queue that already exists does not need a mutex
 
