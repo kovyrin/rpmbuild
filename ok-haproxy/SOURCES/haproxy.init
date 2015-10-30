@@ -81,6 +81,7 @@ case "$1" in
     ;;
   status)
     status haproxy
+    RETVAL=$?
     ;;
   *)
     echo $"Usage: $BASENAME {start|stop|restart|reload|condrestart|status|check}"

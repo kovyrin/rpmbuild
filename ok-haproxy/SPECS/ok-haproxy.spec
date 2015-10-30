@@ -1,7 +1,7 @@
 %define haproxy_home /opt/haproxy
 
-%define haproxy_version 1.4.24
-%define haproxy_revision 02
+%define haproxy_version 1.5.14
+%define haproxy_revision 01
 
 #---------------------------------------------------------------------------------
 Name:           ok-haproxy
@@ -59,6 +59,9 @@ ln -sf %{haproxy_home}/bin/haproxy-%{haproxy_version} %{haproxy_home}/bin/haprox
 rm -rf %{buildroot}
 
 %changelog
+* Thu Jul 9 2015 Vadzim Tonka <vtonko@swiftype.net> - 1.5.14-01
+- Bump up haproxy version
+
 * Sat Feb 22 2014 Oleksiy Kovyrin <alexey@kovyrin.net> - 1.4.24-02
 - Fixed startup script to perform graceful restarts.
 
