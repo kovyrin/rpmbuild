@@ -8,8 +8,8 @@
 
 #---------------------------------------------------------------------------------------------------
 Name: ok-jruby
-Version: 1.7.19
-Release: 3%{?dist}
+Version: 1.7.20.1
+Release: 0%{?dist}
 License: EPL/GPL/LGPL
 Group: Development/Languages
 URL: http://jruby.org
@@ -58,6 +58,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/local/bin/jrubyc
 
 %changelog
+* Thu Jun 11 2015 Vadzim Tonka <vtonko@swiftype.net> 1.7.20-0
+- Upstream upgrade
 * Sun Feb 8 2015 Oleksiy Kovyrin <alexey@kovyrin.net> 1.7.19-3
 - Upstream upgrade
 - Do not fuck with symlinks from post-scripts
