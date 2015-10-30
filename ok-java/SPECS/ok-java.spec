@@ -1,5 +1,5 @@
 # These should match oracle java version/release
-%define java_version 1.7.0_15
+%define java_version 1.7.0_55
 %define java_release fcs
 %define java_epoch 2000
 
